@@ -1,5 +1,5 @@
 $kind: http-request
-description: Current shared account credits. Read-only. Credentials and responses are never persisted by the monitor.
+description: Current shared account credits. Read-only. Omit Authorization to use OLLAMA_CLOUD_BEARER_TOKEN only when configured by the deployment. Explicit headers override it. Credentials and responses are never persisted by the monitor.
 url: "{{baseUrl}}/v1.0/api/balance"
 method: GET
 headers:

@@ -64,7 +64,7 @@ export class ApiClient {
         this.next[resource] = Date.now() + 6100;
         const response = await fetch(url, {
           headers: {
-            Authorization: `Bearer ${this.token}`,
+            ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
             "Accept-Language": document.documentElement.lang,
           },
           signal: signal

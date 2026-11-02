@@ -26,8 +26,15 @@ assumptions:
     status: supported
     claim: In simulated scenarios, the proxy preserves authentication, permission and rate-limit status codes, propagates Retry-After, sanitizes server errors, and refuses redirects.
     reason: The shared integration suite exercises each response through real HTTP. Synthetic bearer values select local scenarios only.
-    verification: On 2026-11-02, 20 managed and 20 Native AOT HTTP checks passed. Browser tests covered invalid keys, rate limiting, and legacy display. Timeout behavior has a configured limit but a hanging upstream scenario has not yet been exercised.
+    verification: On 2026-11-02, 27 managed and 27 Native AOT HTTP checks passed. Browser tests covered invalid keys, rate limiting, and legacy display. Timeout behavior has a configured limit but a hanging upstream scenario has not yet been exercised.
     source: test/Test.Shared/MonitorSuite.cs; postman/mocks/ollama/default.js
+    updated_at: '2026-11-02'
+  - id: configured-account-fallback
+    status: supported
+    claim: In simulated scenarios, requests without Authorization use the server-configured Ollama key, while explicit keys take precedence and invalid explicit keys remain rejected.
+    reason: Shared managed and native HTTP tests, browser tests, and the Docker Compose check exercised the actual server against the existing mock. Health exposes only whether a key is configured.
+    verification: On 2026-11-02, 27 managed and 27 Native AOT checks and 18 browser tests passed. The Compose container returned 200 for balance without Authorization and 401 for an explicit invalid key. The synthetic token was supplied only at runtime.
+    source: test/Test.Shared/MonitorSuite.cs; dashboard/test/browser/configured-account.spec.js; docker/compose.yaml
     updated_at: '2026-11-02'
 fingerprints:
   - id: initial-local-validation

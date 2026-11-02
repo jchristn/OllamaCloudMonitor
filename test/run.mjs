@@ -7,11 +7,15 @@ process.chdir(root);
 const services = [];
 const mockUrl = "http://127.0.0.1:9090/ollama";
 fs.mkdirSync("artifacts", { recursive: true });
-const env = { ...process.env, OLLAMA_BASE_URL: mockUrl };
-function launch(command, args, log) {
+const env = {
+  ...process.env,
+  OLLAMA_BASE_URL: mockUrl,
+  OLLAMA_CLOUD_BEARER_TOKEN: "",
+};
+function launch(command, args, log, overrides = {}) {
   const file = fs.openSync(log, "w");
   const child = spawn(command, args, {
-    env,
+    env: { ...env, ...overrides },
     stdio: ["ignore", file, file],
     detached: process.platform !== "win32",
     shell: process.platform === "win32",
@@ -63,7 +67,7 @@ async function ready(url) {
   throw new Error(`Service did not start: ${url}. See artifacts/*.log`);
 }
 try {
-  for (const port of [8080, 8081, 9090]) await assertPortFree(port);
+  for (const port of [8080, 8081, 8082, 8083, 9090]) await assertPortFree(port);
   await run("npm", ["run", "build", "--prefix", "dashboard"]);
   await run("npm", ["test", "--prefix", "dashboard"]);
   launch(
@@ -117,6 +121,20 @@ try {
     "--env-var",
     "bearerToken=test",
   ]);
+  launch(
+    "dotnet",
+    [
+      "run",
+      "--project",
+      "src/OllamaCloudMonitor.Server",
+      "-c",
+      "Release",
+      "--no-build",
+    ],
+    "artifacts/configured-server.log",
+    { MONITOR_PORT: "8082", OLLAMA_CLOUD_BEARER_TOKEN: "Bearer test" },
+  );
+  await ready("http://127.0.0.1:8082/v1.0/api/health");
   await run("npm", ["run", "test:browser", "--prefix", "dashboard"]);
   await run("dotnet", [
     "publish",

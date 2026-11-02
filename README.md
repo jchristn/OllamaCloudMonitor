@@ -44,7 +44,17 @@ For frontend development, run the server above and `npm run dev --prefix dashboa
 docker compose -f docker/compose.yaml up --build -d
 ```
 
-Open http://127.0.0.1:8080. The container runs as a non-root user and includes a cURL liveness check every five seconds. No volumes or token environment variables are needed. Stop it with `docker compose -f docker/compose.yaml down`.
+Open http://127.0.0.1:8080. The container runs as a non-root user and includes a cURL liveness check every five seconds. No volumes are needed. Optionally configure a server-owned account with `OLLAMA_CLOUD_BEARER_TOKEN` as described below. Stop it with `docker compose -f docker/compose.yaml down`.
+
+For a server-configured account:
+
+```sh
+cp docker/.env.example docker/.env
+# Edit docker/.env locally and set OLLAMA_CLOUD_BEARER_TOKEN.
+docker compose --env-file docker/.env -f docker/compose.yaml up --build -d
+```
+
+Select **Open configured account** on the login page. The configured key stays on the server; requests with an explicit browser bearer token take precedence. Anyone who can reach the monitor can view the configured account, so the default port stays on loopback. Use an authenticated HTTPS reverse proxy before sharing it. Signing out clears the browser session but does not unset the server environment variable. See [Docker assets and operations](docker/README.md) for configuration, rotation, updates and factory reset.
 
 The Compose file builds a local image. To update a local checkout, pull Git changes and rerun `up --build -d`. `docker/update.bat` provides the required pull/down/up/status sequence for installations configured with a published image; this repository does not assume a Docker Hub image has already been published.
 
@@ -58,7 +68,7 @@ Watson 7 / .NET 10: allowlisted read-only proxy and static dashboard
 https://ollama.com/api/usage and /api/balance
 ```
 
-There is one account-scoped client per browser session. Tokens, responses and monitor request metadata stay in memory. No global account cache, database, cookies, user-management API, third-party analytics or token persistence is used. The proxy sanitizes upstream failures, refuses redirects, and never accepts caller-selected upstream URLs. Ollama owns authentication, billing and team permissions. Use HTTPS through a trusted reverse proxy for any remote deployment; do not expose this service over public HTTP.
+There is one account-scoped client per browser session. Browser-entered tokens, responses and monitor request metadata stay in memory. An optional server-owned token is loaded from `OLLAMA_CLOUD_BEARER_TOKEN` at startup and remains available until the container is reconfigured. No global account cache, database, cookies, user-management API, third-party analytics or token persistence is used. The proxy sanitizes upstream failures, refuses redirects, and never accepts caller-selected upstream URLs. Ollama owns authentication, billing and team permissions. Use HTTPS through a trusted reverse proxy for any remote deployment; do not expose this service over public HTTP.
 
 Environment variables are read on startup. They are optional; `.env.example` documents them, but `.env` files are not loaded automatically.
 
@@ -68,9 +78,10 @@ Environment variables are read on startup. They are optional; `.env.example` doc
 | `MONITOR_PORT` | `8080` | Listener port |
 | `MONITOR_WEB_ROOT` | `dashboard/dist` | Built static files, relative to working directory or absolute |
 | `MONITOR_SPEC_PATH` | `postman/specs/monitor.openapi.json` | Contract served by `/openapi.json` |
+| `OLLAMA_CLOUD_BEARER_TOKEN` | Empty | Optional server-owned account used when the request has no Authorization header; enables shared access |
 | `OLLAMA_BASE_URL` | `https://ollama.com` | Integration-test override; keep the default in production |
 
-Run commands from the repository root unless paths are explicitly configured. No configuration contains an API key. Browser theme, language and automatic-refresh preferences are persisted locally. Server configuration is deployment-owned and requires a process restart; it is not editable through the read-only dashboard.
+Run commands from the repository root unless paths are explicitly configured. Example configuration files contain no API keys. Keep real values in your process environment or ignored local `docker/.env`, never in tracked files. Browser theme, language and automatic-refresh preferences are persisted locally. Server configuration is deployment-owned and requires a process restart; it is not editable through the read-only dashboard.
 
 Watson emits its standard HTTP metrics and traces under `Watson`; upstream operation counts and durations use the `OllamaCloudMonitor` Meter and ActivitySource. No exporter or observability backend is bundled. Collectors can subscribe to these sources without changing business logic. Telemetry never includes bearer tokens or billing response bodies.
 
@@ -86,7 +97,7 @@ npx --prefix dashboard playwright install --with-deps chromium
 node test/run.mjs
 ```
 
-The runner starts its own simulation and server on ports 9090, 8080 and 8081. Stop existing monitor/simulation processes before running it. It builds the dashboard and runs accounting tests, i18n checks, managed HTTP tests, the Postman collection, browser tests and the Native AOT HTTP suite. Browser reports and screenshots are in `dashboard/playwright-report` and `dashboard/test-results`. Temporary runner logs are under `artifacts/`.
+The runner starts its own simulation and server on ports 9090 and 8080-8083. Stop existing monitor/simulation processes before running it. It builds the dashboard and runs accounting tests, i18n checks, managed HTTP tests, the Postman collection, browser tests and the Native AOT HTTP suite. Browser reports and screenshots are in `dashboard/playwright-report` and `dashboard/test-results`. Temporary runner logs are under `artifacts/`.
 
 For fast frontend-only checks: `npm test --prefix dashboard`. For manual simulated API exploration, start `postman simulation run postman/simulations/ollama.sim.yaml --port 9090` and launch the server with `OLLAMA_BASE_URL=http://127.0.0.1:9090/ollama` (set the environment variable using your shell's syntax). Synthetic keys `test`, `invalid`, `limited`, `forbidden`, `legacy`, `broken`, and `redirect` select local scenarios. Never use those as live credentials.
 

@@ -1,5 +1,5 @@
 $kind: http-request
-description: Ollama usage totals and time buckets. Read-only. Credentials and responses are never persisted by the monitor.
+description: Ollama usage totals and time buckets. Read-only. Omit Authorization to use OLLAMA_CLOUD_BEARER_TOKEN only when configured by the deployment. Explicit headers override it. Credentials and responses are never persisted by the monitor.
 url: "{{baseUrl}}/v1.0/api/usage?range={{range}}&scope={{scope}}&group_by=model"
 method: GET
 headers:

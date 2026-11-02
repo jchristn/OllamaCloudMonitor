@@ -15,16 +15,32 @@ namespace OllamaCloudMonitor.Server
     public sealed class UsageRoutes : IDisposable
     {
         private readonly HttpClient _Client;
+        private readonly string? _ConfiguredAuthorization;
+
+        /// <summary>Whether a server-owned Ollama token enables shared configured-account access.</summary>
+        public bool HasConfiguredAccount => _ConfiguredAuthorization != null;
         private readonly Meter _Meter = new Meter("OllamaCloudMonitor", "0.1.0");
         private readonly ActivitySource _Activities = new ActivitySource("OllamaCloudMonitor");
         private readonly Counter<long> _Requests;
         private readonly Histogram<double> _Duration;
 
         /// <summary>Creates upstream routes. The owner retains ownership of the client.</summary>
-        public UsageRoutes(HttpClient client)
+        /// <param name="client">Outbound HTTP client.</param>
+        /// <param name="configuredToken">Optional server-owned token. Empty disables shared access; explicit request tokens override it.</param>
+        /// <exception cref="ArgumentNullException">The client is null.</exception>
+        /// <exception cref="ArgumentException">The configured token contains whitespace or exceeds 4089 characters.</exception>
+        public UsageRoutes(HttpClient client, string? configuredToken = null)
         {
             ArgumentNullException.ThrowIfNull(client);
             _Client = client;
+            if (!string.IsNullOrWhiteSpace(configuredToken))
+            {
+                string token = configuredToken.Trim();
+                if (token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) token = token[7..].Trim();
+                if (string.IsNullOrWhiteSpace(token) || token.Any(char.IsWhiteSpace) || token.Length > 4089)
+                    throw new ArgumentException("OLLAMA_CLOUD_BEARER_TOKEN must contain a nonempty bearer token without whitespace, at most 4089 characters.", nameof(configuredToken));
+                _ConfiguredAuthorization = "Bearer " + token;
+            }
             _Requests = _Meter.CreateCounter<long>("ollama.upstream.requests");
             _Duration = _Meter.CreateHistogram<double>("ollama.upstream.duration", "s");
         }
@@ -44,7 +60,7 @@ namespace OllamaCloudMonitor.Server
         {
             MonitorServer.SecureHeaders(ctx);
             ctx.Response.ContentType = "application/json";
-            string? authorization = ctx.Request.Headers["Authorization"];
+            string? authorization = ctx.Request.Headers["Authorization"] ?? _ConfiguredAuthorization;
             if (authorization == null || !authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) || string.IsNullOrWhiteSpace(authorization[7..]) || authorization.Length > 4096)
             {
                 await ErrorAsync(ctx, 401, "unauthorized").ConfigureAwait(false);

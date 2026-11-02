@@ -73,6 +73,17 @@ export default function App() {
   const [retryAt, setRetryAt] = useState(0);
   const [now, setNow] = useState(Date.now());
   const session = useRef(null);
+  const [configuredAccount, setConfiguredAccount] = useState(false);
+  useEffect(() => {
+    const controller = new AbortController();
+    new ApiClient("")
+      .request("health", {}, { signal: controller.signal })
+      .then((health) =>
+        setConfiguredAccount(health.configured_account === true),
+      )
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("monitor.theme", theme);
@@ -161,12 +172,12 @@ export default function App() {
     );
     if (err.retryAt) setRetryAt(err.retryAt);
   }
-  async function login(event, demo = false) {
+  async function login(event, demo = false, configured = false) {
     event?.preventDefault();
     setError("");
     setBusy(true);
     const api = new ApiClient(
-      demo ? "" : token.trim().replace(/^Bearer\s+/i, ""),
+      demo || configured ? "" : token.trim().replace(/^Bearer\s+/i, ""),
       demo,
     );
     try {
@@ -390,6 +401,25 @@ export default function App() {
             </div>
             <h2>{t("Connect your account")}</h2>
             <p>{t("Use your Ollama API key to open your dashboard.")}</p>
+            {configuredAccount && (
+              <div className="notice configured-account">
+                <div>
+                  <p>
+                    {t(
+                      "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.",
+                    )}
+                  </p>
+                  <button
+                    type="button"
+                    className="primary"
+                    disabled={busy || retryAt > now}
+                    onClick={() => login(null, false, true)}
+                  >
+                    {t("Open configured account")}
+                  </button>
+                </div>
+              </div>
+            )}
             <form onSubmit={login}>
               <label htmlFor="token">{t("Bearer token")}</label>
               <div className="token-field">
@@ -440,7 +470,9 @@ export default function App() {
             <div className="secure-note">
               <ShieldCheck size={17} />
               <span>
-                {t("Read-only access. No token storage. No tracking.")}
+                {configuredAccount
+                  ? t("Configured token stays on the server.")
+                  : t("Read-only access. No token storage. No tracking.")}
               </span>
             </div>
             <a

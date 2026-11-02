@@ -3,7 +3,7 @@
   "info": {
     "title": "Ollama Cloud Monitor",
     "version": "0.1.0",
-    "description": "Read-only Ollama Cloud proxy. Usage and balance JSON pass through unchanged. https://docs.ollama.com/api/cloud-usage"
+    "description": "Read-only Ollama Cloud proxy. Usage and balance JSON pass through unchanged. https://docs.ollama.com/api/cloud-usage Optional OLLAMA_CLOUD_BEARER_TOKEN enables shared configured-account access when Authorization is absent; an explicit bearer header takes precedence. The configured token is never returned."
   },
   "servers": [
     {
@@ -34,7 +34,7 @@
       "get": {
         "operationId": "usage",
         "summary": "Ollama usage totals and time buckets",
-        "description": "Ollama usage totals and time buckets. Read-only. Credentials and responses are never persisted by the monitor.",
+        "description": "Ollama usage totals and time buckets. Read-only. Credentials and responses are never persisted by the monitor. Authorization may be omitted only when the deployment has OLLAMA_CLOUD_BEARER_TOKEN configured. Explicit headers override the configured account; malformed headers are rejected.",
         "responses": {
           "200": {
             "description": "Successful JSON response",
@@ -143,7 +143,8 @@
         "security": [
           {
             "bearerAuth": []
-          }
+          },
+          {}
         ],
         "parameters": [
           {
@@ -192,7 +193,7 @@
       "get": {
         "operationId": "balance",
         "summary": "Current shared account credits",
-        "description": "Current shared account credits. Read-only. Credentials and responses are never persisted by the monitor.",
+        "description": "Current shared account credits. Read-only. Credentials and responses are never persisted by the monitor. Authorization may be omitted only when the deployment has OLLAMA_CLOUD_BEARER_TOKEN configured. Explicit headers override the configured account; malformed headers are rejected.",
         "responses": {
           "200": {
             "description": "Successful JSON response",
@@ -301,7 +302,8 @@
         "security": [
           {
             "bearerAuth": []
-          }
+          },
+          {}
         ]
       }
     },
@@ -556,7 +558,8 @@
         "required": [
           "status",
           "version",
-          "upstream"
+          "upstream",
+          "configured_account"
         ],
         "properties": {
           "status": {
@@ -571,6 +574,10 @@
           "upstream": {
             "type": "string",
             "format": "uri"
+          },
+          "configured_account": {
+            "type": "boolean",
+            "description": "Whether a server-side Ollama bearer token is configured. Never includes the token."
           }
         }
       }

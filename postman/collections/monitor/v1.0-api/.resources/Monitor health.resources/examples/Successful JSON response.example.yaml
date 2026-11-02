@@ -17,7 +17,8 @@ response:
     content: |-
       {
         "status": "ok",
-        "version": "string",
-        "upstream": "http://TsGVinZaRL.inrPVcNfBhwNR77+61VOSqSn+h1MMs,4wIYtoUCSnRYc+A"
+        "version": "0.1.0",
+        "upstream": "https://ollama.com",
+        "configured_account": false
       }
 order: 1000

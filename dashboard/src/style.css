@@ -1521,3 +1521,10 @@ pre {
     animation: none !important;
   }
 }
+.configured-account p {
+  color: inherit;
+  margin-bottom: 12px;
+}
+.configured-account button {
+  width: 100%;
+}

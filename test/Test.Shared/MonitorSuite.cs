@@ -15,6 +15,7 @@ namespace OllamaCloudMonitor.Testing
         {
             if (!(Environment.GetEnvironmentVariable("OLLAMA_BASE_URL") ?? "").StartsWith("http://127.0.0.1:", StringComparison.Ordinal))
                 throw new InvalidOperationException("Tests require OLLAMA_BASE_URL pointing to the local Postman simulation.");
+            Environment.SetEnvironmentVariable("OLLAMA_CLOUD_BEARER_TOKEN", null);
             Environment.SetEnvironmentVariable("MONITOR_PORT", "8081");
             using MonitorServer server = new MonitorServer();
             server.Start();
@@ -41,6 +42,26 @@ namespace OllamaCloudMonitor.Testing
             await AssertAsync(client, "/v1.0/api/usage", "redirect", HttpStatusCode.BadGateway, "upstream_redirect", cancellationToken).ConfigureAwait(false); passed++;
             await AssertAsync(client, "/v1.0/api/balance", "legacy", HttpStatusCode.OK, "remaining_percent", cancellationToken).ConfigureAwait(false); passed++;
             await AssertAsync(client, "/v1.0/api/unknown", "test", HttpStatusCode.NotFound, "", cancellationToken).ConfigureAwait(false); passed++;
+            await AssertAsync(client, "/v1.0/api/health", null, HttpStatusCode.OK, "\"configured_account\":false", cancellationToken).ConfigureAwait(false); passed++;
+            Environment.SetEnvironmentVariable("MONITOR_PORT", "8083");
+            Environment.SetEnvironmentVariable("OLLAMA_CLOUD_BEARER_TOKEN", "Bearer test");
+            try
+            {
+                using MonitorServer configuredServer = new MonitorServer();
+                configuredServer.Start();
+                using HttpClient configuredClient = new HttpClient { BaseAddress = new Uri("http://127.0.0.1:8083"), Timeout = TimeSpan.FromSeconds(30) };
+                await AssertAsync(configuredClient, "/v1.0/api/health", null, HttpStatusCode.OK, "\"configured_account\":true", cancellationToken).ConfigureAwait(false); passed++;
+                await AssertAsync(configuredClient, "/v1.0/api/usage?range=24h", null, HttpStatusCode.OK, "\"range\":\"24h\"", cancellationToken).ConfigureAwait(false); passed++;
+                await AssertAsync(configuredClient, "/v1.0/api/balance", null, HttpStatusCode.OK, "balance_usd", cancellationToken).ConfigureAwait(false); passed++;
+                await AssertAsync(configuredClient, "/v1.0/api/usage", "invalid", HttpStatusCode.Unauthorized, "upstream_401", cancellationToken).ConfigureAwait(false); passed++;
+                await AssertAsync(configuredClient, "/v1.0/api/balance", "legacy", HttpStatusCode.OK, "remaining_percent", cancellationToken).ConfigureAwait(false); passed++;
+                await AssertAsync(configuredClient, "/v1.0/api/usage", "", HttpStatusCode.Unauthorized, "unauthorized", cancellationToken).ConfigureAwait(false); passed++;
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("OLLAMA_CLOUD_BEARER_TOKEN", null);
+                Environment.SetEnvironmentVariable("MONITOR_PORT", "8081");
+            }
             return passed;
         }
 

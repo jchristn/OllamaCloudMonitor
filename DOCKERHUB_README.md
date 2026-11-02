@@ -16,11 +16,17 @@ cd OllamaCloudMonitor
 docker compose -f docker/compose.yaml up --build -d
 ```
 
-Open http://127.0.0.1:8080 and paste an Ollama API key or choose the demo. No key is configured in Docker. Tokens remain in browser/server memory for requests and are never saved to disk. Sign out to clear the session.
+Open http://127.0.0.1:8080 and paste an Ollama API key or choose the demo. To preconfigure a server-owned account, copy `docker/.env.example` to the ignored `docker/.env`, set `OLLAMA_CLOUD_BEARER_TOKEN` locally, and run:
+
+```sh
+docker compose --env-file docker/.env -f docker/compose.yaml up --build -d
+```
+
+Select **Open configured account**. The server never sends its key to the browser. This mode allows anyone who reaches the monitor to view the configured account; keep the loopback default or protect the service with authenticated HTTPS. Explicit browser keys override the configured token. Sign-out clears browser state; token rotation requires reconfiguring and recreating the container.
 
 React serves the interactive UI; a Watson 7 / .NET 10 server hosts static files and forwards only the allowlisted read-only API requests to Ollama. The image includes cURL, runs without root, and probes `/v1.0/api/health` every five seconds. That probe verifies monitor liveness, not upstream access. No persistent volume is required.
 
-The container binds port 8080. Optional `MONITOR_PORT`, `MONITOR_HOST`, `MONITOR_WEB_ROOT` and `MONITOR_SPEC_PATH` configure startup. Keep `OLLAMA_BASE_URL` at its default `https://ollama.com` in production. Use HTTPS at a trusted reverse proxy for remote access. No Docker Hub image publication is assumed; after publishing one, replace the Compose image reference with the chosen registry tag.
+The container binds port 8080. `OLLAMA_CLOUD_BEARER_TOKEN` is an optional runtime variable, never a build argument or image value. `MONITOR_PUBLISHED_PORT` controls the loopback host port. Optional `MONITOR_PORT`, `MONITOR_HOST`, `MONITOR_WEB_ROOT` and `MONITOR_SPEC_PATH` configure startup. Keep `OLLAMA_BASE_URL` at its default `https://ollama.com` in production. Use HTTPS at a trusted reverse proxy for remote access. No Docker Hub image publication is assumed; after publishing one, replace the Compose image reference with the chosen registry tag.
 
 [Usage instructions and configuration](https://github.com/jchristn/OllamaCloudMonitor#readme) · [API documentation](https://github.com/jchristn/OllamaCloudMonitor/blob/main/REST_API.md) · [MIT license](https://github.com/jchristn/OllamaCloudMonitor/blob/main/LICENSE.md)
 

@@ -1,6 +1,6 @@
 $kind: collection
 name: Ollama Cloud Monitor
-description: Read-only Ollama Cloud proxy. Usage and balance JSON pass through unchanged. https://docs.ollama.com/api/cloud-usage
+description: Optional OLLAMA_CLOUD_BEARER_TOKEN supplies a shared server account when Authorization is absent. Explicit bearer tokens take precedence. The configured key is never returned. Read-only Ollama Cloud proxy. Usage and balance JSON pass through unchanged. https://docs.ollama.com/api/cloud-usage
 variables:
   baseUrl: http://127.0.0.1:{{port}}
   port: "8080"

@@ -6,7 +6,7 @@ Base URL: `http://127.0.0.1:8080`. The same listener serves the built dashboard 
 
 Only GET is supported for the documented routes. There are no path parameters or request bodies. Proxy responses use `Content-Type: application/json` and `Cache-Control: no-store`. CORS is not enabled. Unknown routes and unsupported methods return 404; OPTIONS returns 405. HTTP upstream redirects are rejected. Upstream base URL is deployment configuration, never caller-controlled.
 
-Usage and balance require `Authorization: Bearer <Ollama API key>`. Ollama validates the token and enforces account and team access on every forwarded request. The proxy does not mint tokens, create accounts or elevate privileges. Health and OpenAPI are anonymous. A successful token login in the UI means `/usage` was successfully fetched; it does not create a server session.
+By default, usage and balance require `Authorization: Bearer <Ollama API key>`. When the deployment sets `OLLAMA_CLOUD_BEARER_TOKEN`, requests without Authorization use that server-owned account. Explicit Authorization always takes precedence, and malformed or rejected explicit keys never fall back to the configured account. Configured-account mode grants anyone who reaches the service access to that account's usage and balance; protect remote deployments with reverse-proxy authentication. Ollama validates the selected token and enforces account and team access on every forwarded request. The proxy does not mint tokens, create accounts or elevate privileges. Health and OpenAPI are anonymous. A successful token login in the UI means `/usage` was successfully fetched; it does not create a server session.
 
 Common proxy errors return `{ "error": "stable_code" }`:
 
@@ -27,10 +27,10 @@ Other upstream error statuses are preserved with `upstream_<status>` and their b
 Anonymous liveness. No parameters. It does not call Ollama and does not establish upstream readiness.
 
 ```json
-{"status":"ok","version":"0.1.0","upstream":"https://ollama.com"}
+{"status":"ok","version":"0.1.0","upstream":"https://ollama.com","configured_account":false}
 ```
 
-Status: 200.
+Status: 200. `configured_account` indicates whether a server-owned token is set. The token is never returned.
 
 ## GET /openapi.json
 

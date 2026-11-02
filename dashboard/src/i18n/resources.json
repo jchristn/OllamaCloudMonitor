@@ -146,7 +146,10 @@
       "rateLimited": "Rate limit reached. Wait before retrying.",
       "remaining": "remaining",
       "requestFailed": "The API request failed. Try refreshing after a moment.",
-      "unauthorized": "Ollama rejected the token. Check your API key and reconnect."
+      "unauthorized": "Ollama rejected the token. Check your API key and reconnect.",
+      "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.",
+      "Open configured account": "Open configured account",
+      "Configured token stays on the server.": "Configured token stays on the server."
     }
   },
   "es": {
@@ -296,7 +299,10 @@
       "rateLimited": "Se alcanzó el límite. Espera antes de reintentar.",
       "remaining": "restante",
       "requestFailed": "La solicitud falló. Prueba a actualizar más tarde.",
-      "unauthorized": "Ollama rechazó el token. Comprueba la clave y vuelve a conectar."
+      "unauthorized": "Ollama rechazó el token. Comprueba la clave y vuelve a conectar.",
+      "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "Hay una cuenta de Ollama configurada en el servidor. Quien acceda a este monitor puede ver su uso.",
+      "Open configured account": "Abrir cuenta configurada",
+      "Configured token stays on the server.": "El token configurado permanece en el servidor."
     }
   },
   "ja": {
@@ -446,7 +452,10 @@
       "rateLimited": "レート制限に達しました。しばらく待ってください。",
       "remaining": "残り",
       "requestFailed": "リクエストに失敗しました。しばらくして更新してください。",
-      "unauthorized": "Ollamaがトークンを拒否しました。キーを確認して再接続してください。"
+      "unauthorized": "Ollamaがトークンを拒否しました。キーを確認して再接続してください。",
+      "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "サーバーにOllamaアカウントが設定されています。この監視アプリにアクセスできる人は利用状況を閲覧できます。",
+      "Open configured account": "設定済みアカウントを開く",
+      "Configured token stays on the server.": "設定済みトークンはサーバー内で保持されます。"
     }
   },
   "ar": {
@@ -596,7 +605,10 @@
       "rateLimited": "تم بلوغ حد الطلبات. انتظر قبل إعادة المحاولة.",
       "remaining": "متبقٍ",
       "requestFailed": "فشل الطلب. حاول التحديث بعد قليل.",
-      "unauthorized": "رفضت Ollama الرمز. تحقق من المفتاح وأعد الاتصال."
+      "unauthorized": "رفضت Ollama الرمز. تحقق من المفتاح وأعد الاتصال.",
+      "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "تم إعداد حساب Ollama على الخادم. يمكن لأي شخص يصل إلى هذا المراقب عرض استخدامه.",
+      "Open configured account": "فتح الحساب المُعدّ",
+      "Configured token stays on the server.": "يبقى الرمز المُعدّ على الخادم."
     }
   },
   "en-XA": {
@@ -746,7 +758,10 @@
       "rateLimited": "⟦ Rate limit reached. Wait before retrying. ····· ⟧",
       "remaining": "⟦ remaining ····· ⟧",
       "requestFailed": "⟦ The API request failed. Try refreshing after a moment. ····· ⟧",
-      "unauthorized": "⟦ Ollama rejected the token. Check your API key and reconnect. ····· ⟧"
+      "unauthorized": "⟦ Ollama rejected the token. Check your API key and reconnect. ····· ⟧",
+      "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "⟦ A server-side Ollama account is configured. Anyone with access to this monitor can view its usage. ····· ⟧",
+      "Open configured account": "⟦ Open configured account ····· ⟧",
+      "Configured token stays on the server.": "⟦ Configured token stays on the server. ····· ⟧"
     }
   },
   "ar-XB": {
@@ -896,7 +911,10 @@
       "rateLimited": "‮Rate limit reached. Wait before retrying.‬",
       "remaining": "‮remaining‬",
       "requestFailed": "‮The API request failed. Try refreshing after a moment.‬",
-      "unauthorized": "‮Ollama rejected the token. Check your API key and reconnect.‬"
+      "unauthorized": "‮Ollama rejected the token. Check your API key and reconnect.‬",
+      "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "‮A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.‬",
+      "Open configured account": "‮Open configured account‬",
+      "Configured token stays on the server.": "‮Configured token stays on the server.‬"
     }
   }
 }

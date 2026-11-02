@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Organized Docker assets under docker/, with a server Dockerfile, environment template, deployment guide, update helper and confirmed factory reset.
+- Added optional OLLAMA_CLOUD_BEARER_TOKEN runtime configuration with a configured-account login action, explicit-token precedence and credential-free health metadata.
+- Added managed, Native AOT and browser coverage for configured-account access and explicit-key rejection.
+
 ## v0.1.0 - 2026-11-02
 
 Initial alpha release. Version v0.1.0 follows the explicitly requested release number.

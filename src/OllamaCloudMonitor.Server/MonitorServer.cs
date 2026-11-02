@@ -17,7 +17,7 @@ namespace OllamaCloudMonitor.Server
         private readonly string _WebRoot;
         private readonly string _SpecPath;
 
-        /// <summary>Creates a listener configured by MONITOR_HOST, MONITOR_PORT, MONITOR_WEB_ROOT and OLLAMA_BASE_URL.</summary>
+        /// <summary>Creates a listener configured by MONITOR_HOST, MONITOR_PORT, MONITOR_WEB_ROOT, OLLAMA_BASE_URL and optional OLLAMA_CLOUD_BEARER_TOKEN.</summary>
         public MonitorServer()
         {
             string hostname = Environment.GetEnvironmentVariable("MONITOR_HOST") ?? "127.0.0.1";
@@ -32,7 +32,7 @@ namespace OllamaCloudMonitor.Server
             WebserverSettings settings = new WebserverSettings(hostname, port, false);
             settings.Headers.DefaultHeaders.Clear();
             _Server = new Webserver(settings, StaticAsync);
-            _Usage = new UsageRoutes(_Client);
+            _Usage = new UsageRoutes(_Client, Environment.GetEnvironmentVariable("OLLAMA_CLOUD_BEARER_TOKEN"));
             _Usage.Register(_Server);
             _Server.Routes.PreAuthentication.Static.Add(WatsonWebserver.Core.HttpMethod.GET, "/v1.0/api/health", HealthAsync);
             _Server.Routes.PreAuthentication.Static.Add(WatsonWebserver.Core.HttpMethod.GET, "/openapi.json", SpecAsync);
@@ -55,12 +55,12 @@ namespace OllamaCloudMonitor.Server
             _Usage.Dispose();
         }
 
-        private static async Task HealthAsync(HttpContextBase ctx)
+        private async Task HealthAsync(HttpContextBase ctx)
         {
             SecureHeaders(ctx);
             ctx.Response.StatusCode = 200;
             ctx.Response.ContentType = "application/json";
-            await ctx.Response.Send("{\"status\":\"ok\",\"version\":\"0.1.0\",\"upstream\":\"https://ollama.com\"}").ConfigureAwait(false);
+            await ctx.Response.Send("{\"status\":\"ok\",\"version\":\"0.1.0\",\"upstream\":\"https://ollama.com\",\"configured_account\":" + (_Usage.HasConfiguredAccount ? "true" : "false") + "}").ConfigureAwait(false);
         }
 
         private async Task SpecAsync(HttpContextBase ctx)
