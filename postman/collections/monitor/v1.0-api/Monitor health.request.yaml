@@ -1,0 +1,9 @@
+$kind: http-request
+description: Monitor health. Read-only. Credentials and responses are never persisted by the monitor.
+url: "{{baseUrl}}/v1.0/api/health"
+method: GET
+headers:
+  Accept: application/json
+settings: {}
+examples: ./.resources/Monitor health.resources/examples
+order: 1000

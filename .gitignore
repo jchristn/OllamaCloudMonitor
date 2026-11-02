@@ -1,0 +1,23 @@
+# Dependencies and generated output
+node_modules/
+dashboard/dist/
+**/bin/
+**/obj/
+artifacts/
+**/test-results/
+**/playwright-report/
+coverage/
+# Credentials, local configuration, editor and OS files
+.env
+.env.*
+!.env.example
+*.user
+*.suo
+.vscode/
+.idea/
+.DS_Store
+*.log
+*.ndjson
+postman/.dependencies/
+.postman/skills.json
+postman/skills/

@@ -1,0 +1,10 @@
+.git
+**/node_modules
+**/bin
+**/obj
+dashboard/dist
+artifacts
+**/test-results
+**/playwright-report
+.env*
+postman/skills

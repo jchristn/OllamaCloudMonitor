@@ -1,0 +1,4 @@
+$kind: collection
+name: v1.0/api
+order: 1000
+description: Read-only monitor operations. Usage and balance require the caller's Ollama bearer token. Health does not contact Ollama. Time buckets are UTC; balance is current and shared.

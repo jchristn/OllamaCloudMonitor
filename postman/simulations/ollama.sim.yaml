@@ -1,0 +1,8 @@
+simulation: ollama-cloud
+routing: path
+mocks:
+  - name: ollama
+    routeKey: ollama
+    origin:
+      - ollama.com
+    path: postman/mocks/ollama/config.yaml

@@ -1,0 +1,36 @@
+version: 1
+simulation: ollama-cloud
+purpose: Verify the actual Watson proxy and browser dashboard without a real Ollama API key.
+dependencies:
+  - name: ollama
+    role: Read-only cloud usage and balance provider.
+    source: https://docs.ollama.com/api/cloud-usage
+    communication: Local HTTP path routing at http://127.0.0.1:9090/ollama.
+    manifest: postman/mocks/ollama/config.yaml
+assumptions:
+  - id: usage-range-contract
+    status: supported
+    claim: Usage supports 24h, 7d, and 30d UTC ranges with model groups and an optional remainder.
+    reason: The provider documentation describes these ranges and the ten-group limit. The mock uses this documented structure with synthetic values.
+    verification: On 2026-11-02, all three ranges traversed the real Watson proxy to this mock. HTTP checks passed and the browser changed to 31 daily buckets for 30d. No authenticated live provider call was made.
+    source: https://docs.ollama.com/api/cloud-usage; test/Test.Shared/MonitorSuite.cs; dashboard/test/browser/dashboard.spec.js
+    updated_at: '2026-11-02'
+  - id: current-shared-balance
+    status: supported
+    claim: Balance is current and shared across models and team members; legacy plans can return percentages without included USD.
+    reason: The balance documentation explicitly defines shared credits and legacy fields.
+    verification: On 2026-11-02, browser and managed/native suites received credit and legacy responses through the actual proxy. Legacy aggregate USD stayed unavailable. No live billing account was tested.
+    source: https://docs.ollama.com/api/balance; dashboard/src/utils/usage.test.js
+    updated_at: '2026-11-02'
+  - id: upstream-failure-handling
+    status: supported
+    claim: In simulated scenarios, the proxy preserves authentication, permission and rate-limit status codes, propagates Retry-After, sanitizes server errors, and refuses redirects.
+    reason: The shared integration suite exercises each response through real HTTP. Synthetic bearer values select local scenarios only.
+    verification: On 2026-11-02, 20 managed and 20 Native AOT HTTP checks passed. Browser tests covered invalid keys, rate limiting, and legacy display. Timeout behavior has a configured limit but a hanging upstream scenario has not yet been exercised.
+    source: test/Test.Shared/MonitorSuite.cs; postman/mocks/ollama/default.js
+    updated_at: '2026-11-02'
+fingerprints:
+  - id: initial-local-validation
+    date: '2026-11-02'
+    cli: 1.75.0
+    commit: initial-v0.1.0-working-tree

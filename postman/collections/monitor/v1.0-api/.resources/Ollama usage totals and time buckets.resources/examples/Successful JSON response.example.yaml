@@ -1,0 +1,118 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1.0/api/usage?range=7d&scope=self&group_by=model"
+  method: GET
+  headers:
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+    - key: Accept
+      value: application/json
+  queryParams:
+    range: 7d
+    scope: self
+    group_by: model
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "range": "24h",
+        "scope": "team",
+        "granularity": "day",
+        "from": "2002-02-22T14:25:23.573Z",
+        "until": "1963-06-11T20:26:44.857Z",
+        "totals": {
+          "request_count": 8600,
+          "usage_usd": 4857.370865065604,
+          "input_tokens": 6247,
+          "cached_input_tokens": 7332,
+          "output_tokens": 3175,
+          "groups": [
+            {
+              "request_count": 9528,
+              "usage_usd": 7211.082335561514,
+              "input_tokens": 9080,
+              "cached_input_tokens": 3903,
+              "output_tokens": 4885,
+              "model": "string"
+            },
+            {
+              "request_count": 5301,
+              "usage_usd": 5974.419033154845,
+              "input_tokens": 843,
+              "cached_input_tokens": 3464,
+              "output_tokens": 6305,
+              "model": "string"
+            }
+          ],
+          "remainder": {
+            "request_count": 2270,
+            "usage_usd": 48.102568835020065,
+            "input_tokens": 8574,
+            "cached_input_tokens": 7789,
+            "output_tokens": 9885
+          }
+        },
+        "buckets": [
+          {
+            "request_count": 6724,
+            "usage_usd": 4594.842207152396,
+            "input_tokens": 3983,
+            "cached_input_tokens": 2883,
+            "output_tokens": 2777,
+            "groups": [
+              {
+                "value": "<Error: Too many levels of nesting to fake this schema>"
+              },
+              {
+                "value": "<Error: Too many levels of nesting to fake this schema>"
+              }
+            ],
+            "remainder": {
+              "request_count": 5678,
+              "usage_usd": 6424.796585924923,
+              "input_tokens": 9032,
+              "cached_input_tokens": 4247,
+              "output_tokens": 6630
+            },
+            "from": "2024-09-07T07:05:47.075Z",
+            "until": "2006-08-26T13:10:05.690Z",
+            "partial": false
+          },
+          {
+            "request_count": 4121,
+            "usage_usd": 1431.397378910333,
+            "input_tokens": 4854,
+            "cached_input_tokens": 8390,
+            "output_tokens": 982,
+            "groups": [
+              {
+                "value": "<Error: Too many levels of nesting to fake this schema>"
+              },
+              {
+                "value": "<Error: Too many levels of nesting to fake this schema>"
+              }
+            ],
+            "remainder": {
+              "request_count": 6305,
+              "usage_usd": 8996.285949833691,
+              "input_tokens": 8808,
+              "cached_input_tokens": 7029,
+              "output_tokens": 8511
+            },
+            "from": "1965-09-01T16:05:03.347Z",
+            "until": "1987-11-07T01:11:31.484Z",
+            "partial": true
+          }
+        ],
+        "group_by": "model"
+      }
+order: 1000

@@ -1,0 +1,9 @@
+$kind: http-request
+description: Monitor OpenAPI contract. Read-only. Credentials and responses are never persisted by the monitor.
+url: "{{baseUrl}}/openapi.json"
+method: GET
+headers:
+  Accept: application/json
+settings: {}
+examples: ./.resources/Monitor OpenAPI contract.resources/examples
+order: 2000

@@ -1,0 +1,579 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ollama Cloud Monitor",
+    "version": "0.1.0",
+    "description": "Read-only Ollama Cloud proxy. Usage and balance JSON pass through unchanged. https://docs.ollama.com/api/cloud-usage"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8080"
+    }
+  ],
+  "paths": {
+    "/v1.0/api/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Monitor health",
+        "description": "Monitor health. Read-only. Credentials and responses are never persisted by the monitor.",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1.0/api/usage": {
+      "get": {
+        "operationId": "usage",
+        "summary": "Ollama usage totals and time buckets",
+        "description": "Ollama usage totals and time buckets. Read-only. Credentials and responses are never persisted by the monitor.",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or repeated query parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token missing or rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Ollama denied scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded. Observe Retry-After seconds.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream network or invalid response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Upstream timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Ollama returned an internal server error. The monitor returns a sanitized JSON error code."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "range",
+            "in": "query",
+            "description": "UTC range, including current partial bucket",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d"
+              ],
+              "default": "7d"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "description": "Team requires Ollama team administrator",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "self",
+                "team"
+              ],
+              "default": "self"
+            }
+          },
+          {
+            "name": "group_by",
+            "in": "query",
+            "description": "Top ten models; additional models appear in remainder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "model"
+              ],
+              "default": "model"
+            }
+          }
+        ]
+      }
+    },
+    "/v1.0/api/balance": {
+      "get": {
+        "operationId": "balance",
+        "summary": "Current shared account credits",
+        "description": "Current shared account credits. Read-only. Credentials and responses are never persisted by the monitor.",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Balance"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or repeated query parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Bearer token missing or rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Ollama denied scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded. Observe Retry-After seconds.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream network or invalid response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Upstream timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Ollama returned an internal server error. The monitor returns a sanitized JSON error code."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "operationId": "openapi_json",
+        "summary": "Monitor OpenAPI contract",
+        "description": "Monitor OpenAPI contract. Read-only. Credentials and responses are never persisted by the monitor.",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The deployment is missing the contract file."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Metrics": {
+        "type": "object",
+        "description": "Cost and token fields are absent for legacy plans; absence means unavailable, not zero.",
+        "properties": {
+          "request_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "usage_usd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cached_input_tokens": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Subset of input_tokens; do not add it to input_tokens."
+          },
+          "output_tokens": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "ModelGroup": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Metrics"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "model": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "Aggregates": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Metrics"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "groups": {
+                "type": "array",
+                "maxItems": 10,
+                "items": {
+                  "$ref": "#/components/schemas/ModelGroup"
+                }
+              },
+              "remainder": {
+                "$ref": "#/components/schemas/Metrics"
+              }
+            }
+          }
+        ]
+      },
+      "Period": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "LegacyLimit": {
+        "type": "object",
+        "properties": {
+          "remaining_percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "resets_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Bucket": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Aggregates"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "until": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "partial": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "Usage": {
+        "type": "object",
+        "required": [
+          "range",
+          "scope",
+          "granularity",
+          "from",
+          "until",
+          "totals",
+          "buckets"
+        ],
+        "properties": {
+          "range": {
+            "type": "string",
+            "enum": [
+              "24h",
+              "7d",
+              "30d"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "self",
+              "team"
+            ]
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "hour",
+              "day"
+            ]
+          },
+          "group_by": {
+            "type": "string",
+            "enum": [
+              "model"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/Aggregates"
+          },
+          "buckets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bucket"
+            }
+          }
+        }
+      },
+      "Balance": {
+        "type": "object",
+        "required": [
+          "included",
+          "purchased"
+        ],
+        "properties": {
+          "included": {
+            "type": "object",
+            "properties": {
+              "balance_usd": {
+                "type": "number"
+              },
+              "allowance_usd": {
+                "type": "number"
+              },
+              "period": {
+                "$ref": "#/components/schemas/Period"
+              },
+              "session": {
+                "$ref": "#/components/schemas/LegacyLimit"
+              },
+              "weekly": {
+                "$ref": "#/components/schemas/LegacyLimit"
+              }
+            }
+          },
+          "purchased": {
+            "type": "object",
+            "properties": {
+              "balance_usd": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "Health": {
+        "type": "object",
+        "required": [
+          "status",
+          "version",
+          "upstream"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "version": {
+            "type": "string"
+          },
+          "upstream": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    }
+  }
+}

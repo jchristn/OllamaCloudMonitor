@@ -1,0 +1,43 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1.0/api/balance"
+  method: GET
+  headers:
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+    - key: Accept
+      value: application/json
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "included": {
+          "balance_usd": 4805.9906787239015,
+          "allowance_usd": 7248.293743468821,
+          "period": {
+            "from": "2019-07-31T00:34:41.640Z",
+            "until": "1996-01-16T00:35:40.956Z"
+          },
+          "session": {
+            "remaining_percent": 89.6839400054887,
+            "resets_at": "1985-08-23T16:05:43.690Z"
+          },
+          "weekly": {
+            "remaining_percent": 51.853555091656744,
+            "resets_at": "1989-10-26T18:01:40.736Z"
+          }
+        },
+        "purchased": {
+          "balance_usd": 7382.272952236235
+        }
+      }
+order: 1000

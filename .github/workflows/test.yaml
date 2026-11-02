@@ -1,0 +1,40 @@
+name: Test
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    name: Full suite (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: npm ci --prefix dashboard
+      - run: npm install -g postman-cli@1.75.0
+      - run: npx --prefix dashboard playwright install --with-deps chromium
+      - name: Run the full suite, including Native AOT
+        run: node test/run.mjs
+      - name: Upload all verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ matrix.os }}
+          path: |
+            artifacts/*.log
+            dashboard/playwright-report/
+            dashboard/test-results/
+          if-no-files-found: warn

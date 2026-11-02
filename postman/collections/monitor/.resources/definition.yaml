@@ -1,0 +1,16 @@
+$kind: collection
+name: Ollama Cloud Monitor
+description: Read-only Ollama Cloud proxy. Usage and balance JSON pass through unchanged. https://docs.ollama.com/api/cloud-usage
+variables:
+  baseUrl: http://127.0.0.1:{{port}}
+  port: "8080"
+  range: 7d
+  scope: self
+  bearerToken: ""
+scripts:
+  - type: http:afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Request succeeds', () => pm.response.to.have.status(200));
+      pm.test('JSON response', () => pm.expect(pm.response.json()).to.be.an('object'));
+      pm.test('Sensitive data is not cached', () => pm.expect(pm.response.headers.get('Cache-Control')).to.include('no-store'));

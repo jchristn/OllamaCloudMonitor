@@ -1,0 +1,26 @@
+$kind: http-request
+description: Ollama usage totals and time buckets. Read-only. Credentials and responses are never persisted by the monitor.
+url: "{{baseUrl}}/v1.0/api/usage?range={{range}}&scope={{scope}}&group_by=model"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: range
+    value: "{{range}}"
+    disabled: false
+    description: UTC range, including current partial bucket
+  - key: scope
+    value: "{{scope}}"
+    disabled: false
+    description: Team requires Ollama team administrator
+  - key: group_by
+    value: model
+    disabled: false
+    description: Top ten models; additional models appear in remainder
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/Ollama usage totals and time buckets.resources/examples
+order: 2000

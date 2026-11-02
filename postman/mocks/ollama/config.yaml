@@ -1,0 +1,11 @@
+version: 1
+name: ollama
+slug: ollama
+protocol: http
+port: 9091
+origin: ollama.com
+interceptRequests: true
+scenarios:
+  - name: default
+    path: ./default.js
+    default: true

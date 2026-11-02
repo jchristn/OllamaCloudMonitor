@@ -1,0 +1,21 @@
+$kind: http-example
+name: Ollama returned an internal server error. The monitor returns a sanitized JSON error code.
+request:
+  url: "{{baseUrl}}/v1.0/api/balance"
+  method: GET
+  headers:
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 500
+  statusText: Internal Server Error
+  headers:
+    Content-Type: text/plain
+  body:
+    type: text
+    content: ""
+order: 6000

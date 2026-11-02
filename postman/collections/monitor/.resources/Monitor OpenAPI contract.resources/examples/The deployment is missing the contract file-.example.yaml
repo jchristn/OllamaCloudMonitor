@@ -1,0 +1,17 @@
+$kind: http-example
+name: The deployment is missing the contract file.
+request:
+  url: "{{baseUrl}}/openapi.json"
+  method: GET
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 503
+  statusText: Service Unavailable
+  headers:
+    Content-Type: text/plain
+  body:
+    type: text
+    content: ""
+order: 2000

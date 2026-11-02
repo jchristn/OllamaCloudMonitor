@@ -1,0 +1,30 @@
+{
+  "name": "ollama-cloud-monitor-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "test": "vitest run && npm run check:i18n",
+    "test:browser": "playwright test",
+    "check:i18n": "node ../test/check-i18n.mjs"
+  },
+  "dependencies": {
+    "i18next": "^25.6.0",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "lucide-react": "^0.548.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-i18next": "^16.2.0",
+    "react-router-dom": "^7.9.0"
+  },
+  "devDependencies": {
+    "@babel/parser": "^8.1.0",
+    "@playwright/test": "^1.56.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "prettier": "^3.9.10",
+    "vite": "^6.4.0",
+    "vitest": "^5.1.0"
+  }
+}

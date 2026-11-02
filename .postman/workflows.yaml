@@ -1,0 +1,4 @@
+workflows:
+  syncSpecToCollection:
+    - spec: ../postman/specs/monitor.openapi.json
+      collection: ../postman/collections/monitor

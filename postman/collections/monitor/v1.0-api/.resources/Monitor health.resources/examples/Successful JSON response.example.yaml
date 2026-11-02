@@ -1,0 +1,23 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/v1.0/api/health"
+  method: GET
+  headers:
+    Accept: application/json
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "status": "ok",
+        "version": "string",
+        "upstream": "http://TsGVinZaRL.inrPVcNfBhwNR77+61VOSqSn+h1MMs,4wIYtoUCSnRYc+A"
+      }
+order: 1000
