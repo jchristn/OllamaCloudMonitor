@@ -4,7 +4,6 @@ export class ApiClient {
   constructor(token, demo = false) {
     this.token = token;
     this.demo = demo;
-    this.history = [];
     this.cache = new Map();
     this.next = {};
     this.blockedUntil = 0;
@@ -42,80 +41,62 @@ export class ApiClient {
           { once: true },
         );
       });
-    const start = performance.now();
-    const entry = {
-      at: new Date().toISOString(),
-      method: "GET",
-      path: url,
-      status: 0,
-      duration: 0,
-    };
-    try {
-      let data;
-      if (this.demo && resource !== "openapi") {
-        data =
-          resource === "usage"
-            ? demoUsage(query.range, query.scope)
-            : resource === "balance"
-              ? demoBalance
-              : { status: "ok", version: "0.1.0" };
-        entry.status = 200;
-      } else {
-        this.next[resource] = Date.now() + 6100;
-        const response = await fetch(url, {
-          headers: {
-            ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
-            "Accept-Language": document.documentElement.lang,
-          },
-          signal: signal
-            ? AbortSignal.any([signal, AbortSignal.timeout(25000)])
-            : AbortSignal.timeout(25000),
-          cache: "no-store",
+    let data;
+    if (this.demo && resource !== "openapi") {
+      data =
+        resource === "usage"
+          ? demoUsage(query.range, query.scope)
+          : resource === "balance"
+            ? demoBalance
+            : { status: "ok", version: "0.1.0" };
+    } else {
+      this.next[resource] = Date.now() + 6100;
+      const response = await fetch(url, {
+        headers: {
+          ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
+          "Accept-Language": document.documentElement.lang,
+        },
+        signal: signal
+          ? AbortSignal.any([signal, AbortSignal.timeout(25000)])
+          : AbortSignal.timeout(25000),
+        cache: "no-store",
+      });
+      if (response.status === 429) {
+        const retry = response.headers.get("Retry-After");
+        const seconds = Number(retry);
+        this.blockedUntil =
+          Number.isFinite(seconds) && seconds > 0
+            ? Date.now() + seconds * 1000
+            : Math.max(Date.now() + 60000, Date.parse(retry) || 0);
+        throw Object.assign(new Error("rateLimited"), {
+          retryAt: this.blockedUntil,
         });
-        entry.status = response.status;
-        if (response.status === 429) {
-          const retry = response.headers.get("Retry-After");
-          const seconds = Number(retry);
-          this.blockedUntil =
-            Number.isFinite(seconds) && seconds > 0
-              ? Date.now() + seconds * 1000
-              : Math.max(Date.now() + 60000, Date.parse(retry) || 0);
-          throw Object.assign(new Error("rateLimited"), {
-            retryAt: this.blockedUntil,
-          });
-        }
-        if (!response.ok)
-          throw Object.assign(
-            new Error(
-              response.status === 401
-                ? "unauthorized"
-                : response.status === 403
-                  ? "forbidden"
-                  : "requestFailed",
-            ),
-            { status: response.status },
-          );
-        data = await response.json();
-        if (
-          resource === "usage" &&
-          (!Array.isArray(data.buckets) || !data.totals)
-        )
-          throw new Error("invalidResponse");
       }
-      this.cache.set(url, { time: Date.now(), data });
-      return data;
-    } catch (error) {
-      entry.error = error.message;
-      throw error;
-    } finally {
-      entry.duration = Math.round(performance.now() - start);
-      this.history = [entry, ...this.history].slice(0, 100);
+      if (!response.ok)
+        throw Object.assign(
+          new Error(
+            response.status === 401
+              ? "unauthorized"
+              : response.status === 403
+                ? "forbidden"
+                : "requestFailed",
+          ),
+          { status: response.status },
+        );
+      data = await response.json();
+      if (
+        resource === "usage" &&
+        (!Array.isArray(data.buckets) || !data.totals)
+      )
+        throw new Error("invalidResponse");
     }
+    this.cache.set(url, { time: Date.now(), data });
+    return data;
   }
-  /** Erase all credentials and session records on logout. */
+
+  /** Erase credentials and cached account data on logout. */
   clear() {
     this.token = "";
     this.cache.clear();
-    this.history = [];
   }
 }

@@ -6,11 +6,14 @@ const root = path.resolve(import.meta.dirname, "..");
 process.chdir(root);
 const services = [];
 const mockUrl = "http://127.0.0.1:9090/ollama";
+const monitorPort = process.env.MONITOR_TEST_PORT ?? "8080";
+const monitorUrl = `http://127.0.0.1:${monitorPort}`;
 fs.mkdirSync("artifacts", { recursive: true });
 const env = {
   ...process.env,
   OLLAMA_BASE_URL: mockUrl,
   OLLAMA_CLOUD_BEARER_TOKEN: "",
+  MONITOR_TEST_URL: monitorUrl,
 };
 function launch(command, args, log, overrides = {}) {
   const file = fs.openSync(log, "w");
@@ -67,7 +70,8 @@ async function ready(url) {
   throw new Error(`Service did not start: ${url}. See artifacts/*.log`);
 }
 try {
-  for (const port of [8080, 8081, 8082, 8083, 9090]) await assertPortFree(port);
+  for (const port of [Number(monitorPort), 8081, 8082, 8083, 9090])
+    await assertPortFree(port);
   await run("npm", ["run", "build", "--prefix", "dashboard"]);
   await run("npm", ["test", "--prefix", "dashboard"]);
   launch(
@@ -102,8 +106,9 @@ try {
       "--no-build",
     ],
     "artifacts/server.log",
+    { MONITOR_PORT: monitorPort },
   );
-  await ready("http://127.0.0.1:8080/v1.0/api/health");
+  await ready(monitorUrl + "/v1.0/api/health");
   await run("postman", [
     "spec",
     "lint",
@@ -117,7 +122,7 @@ try {
     "run",
     "postman/collections/monitor",
     "--env-var",
-    "baseUrl=http://127.0.0.1:8080",
+    `baseUrl=${monitorUrl}`,
     "--env-var",
     "bearerToken=test",
   ]);

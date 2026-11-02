@@ -12,7 +12,7 @@ A private, read-only dashboard for Ollama Cloud usage and credit balances. Conne
 - 24-hour, 7-day and 30-day usage plots with cost, requests, input, cached input and output tokens.
 - Self/team scope, model selection, model comparison and selected-series CSV export.
 - Current included + purchased credit balance, monthly allowance and reset times; legacy plan limit support.
-- Monitor request history for the current browser session, JSON inspectors and an OpenAPI-driven API explorer.
+- JSON inspectors and an OpenAPI-driven API explorer.
 - Light/dark themes, responsive layouts, English, Spanish, Japanese, Arabic and layout-testing pseudo-locales.
 - A clearly marked synthetic demo. It works without an API key.
 
@@ -68,7 +68,7 @@ Watson 7 / .NET 10: allowlisted read-only proxy and static dashboard
 https://ollama.com/api/usage and /api/balance
 ```
 
-There is one account-scoped client per browser session. Browser-entered tokens, responses and monitor request metadata stay in memory. An optional server-owned token is loaded from `OLLAMA_CLOUD_BEARER_TOKEN` at startup and remains available until the container is reconfigured. No global account cache, database, cookies, user-management API, third-party analytics or token persistence is used. The proxy sanitizes upstream failures, refuses redirects, and never accepts caller-selected upstream URLs. Ollama owns authentication, billing and team permissions. Use HTTPS through a trusted reverse proxy for any remote deployment; do not expose this service over public HTTP.
+There is one account-scoped client per browser session. Browser-entered tokens and responses stay in memory. An optional server-owned token is loaded from `OLLAMA_CLOUD_BEARER_TOKEN` at startup and remains available until the container is reconfigured. No global account cache, database, cookies, user-management API, third-party analytics or token persistence is used. The proxy sanitizes upstream failures, refuses redirects, and never accepts caller-selected upstream URLs. Ollama owns authentication, billing and team permissions. Use HTTPS through a trusted reverse proxy for any remote deployment; do not expose this service over public HTTP.
 
 Environment variables are read on startup. They are optional; `.env.example` documents them, but `.env` files are not loaded automatically.
 
@@ -97,7 +97,7 @@ npx --prefix dashboard playwright install --with-deps chromium
 node test/run.mjs
 ```
 
-The runner starts its own simulation and server on ports 9090 and 8080-8083. Stop existing monitor/simulation processes before running it. It builds the dashboard and runs accounting tests, i18n checks, managed HTTP tests, the Postman collection, browser tests and the Native AOT HTTP suite. Browser reports and screenshots are in `dashboard/playwright-report` and `dashboard/test-results`. Temporary runner logs are under `artifacts/`.
+The runner starts its own simulation and server on ports 9090 and 8080-8083. Use `MONITOR_TEST_PORT` to select a different main monitor test port if 8080 is occupied (for example, `MONITOR_TEST_PORT=18080 node test/run.mjs` on POSIX shells). The other test ports must be free. It builds the dashboard and runs accounting tests, i18n checks, managed HTTP tests, the Postman collection, browser tests and the Native AOT HTTP suite. Browser reports and screenshots are in `dashboard/playwright-report` and `dashboard/test-results`. Temporary runner logs are under `artifacts/`.
 
 For fast frontend-only checks: `npm test --prefix dashboard`. For manual simulated API exploration, start `postman simulation run postman/simulations/ollama.sim.yaml --port 9090` and launch the server with `OLLAMA_BASE_URL=http://127.0.0.1:9090/ollama` (set the environment variable using your shell's syntax). Synthetic keys `test`, `invalid`, `limited`, `forbidden`, `legacy`, `broken`, and `redirect` select local scenarios. Never use those as live credentials.
 

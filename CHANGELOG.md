@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Removed Request History navigation, page and browser request recording because Ollama exposes no individual request-history API.
+
 - Organized Docker assets under docker/, with a server Dockerfile, environment template, deployment guide, update helper and confirmed factory reset.
 - Added optional OLLAMA_CLOUD_BEARER_TOKEN runtime configuration with a configured-account login action, explicit-token precedence and credential-free health metadata.
 - Added managed, Native AOT and browser coverage for configured-account access and explicit-key rejection.

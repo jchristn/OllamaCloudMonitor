@@ -14,6 +14,9 @@ test("demo filters, model selection, inspect, export and all routes", async ({
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await demo(page);
+  await expect(
+    page.getByRole("link", { name: "Request history", exact: true }),
+  ).toHaveCount(0);
   await expect(page.getByText("$97.50", { exact: true }).first()).toBeVisible();
   await page.getByRole("button", { name: "24 hours", exact: true }).click();
   await expect(
@@ -28,12 +31,7 @@ test("demo filters, model selection, inspect, export and all routes", async ({
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export CSV", exact: true }).click();
   expect((await download).suggestedFilename()).toBe("ollama-usage-24h.csv");
-  for (const name of [
-    "Models",
-    "Request history",
-    "API explorer",
-    "Settings",
-  ]) {
+  for (const name of ["Models", "API explorer", "Settings"]) {
     await page.getByRole("link", { name, exact: true }).click();
     await expect(
       page.getByRole("heading", { name, exact: true }),

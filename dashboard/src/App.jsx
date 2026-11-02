@@ -21,7 +21,6 @@ import {
   Eye,
   EyeOff,
   Github,
-  History,
   KeyRound,
   LogOut,
   Menu,
@@ -308,7 +307,6 @@ export default function App() {
   const navigation = [
     { path: "home", label: "Overview", icon: BarChart3 },
     { path: "models", label: "Models", icon: Box },
-    { path: "request-history", label: "Request history", icon: History },
     { path: "api-explorer", label: "API explorer", icon: Code2 },
     { path: "settings", label: "Settings", icon: Settings },
   ];
@@ -865,45 +863,6 @@ export default function App() {
                           label: "Output tokens",
                           render: (value) => number(value),
                         },
-                      ]}
-                    />
-                  </section>
-                </>
-              }
-            />
-            <Route
-              path="/dashboard/request-history"
-              element={
-                <>
-                  <PageTitle
-                    title="Request history"
-                    description="Monitor requests in this browser session only. Ollama does not expose individual inference request history."
-                  />
-                  <section className="panel">
-                    <div className="panel-heading">
-                      <h2>{t("Session requests")}</h2>
-                      <button
-                        onClick={() => {
-                          client.history = [];
-                          setNow(Date.now());
-                        }}
-                      >
-                        {t("Clear history")}
-                      </button>
-                    </div>
-                    <DataTable
-                      rows={client.history}
-                      searchKey="path"
-                      columns={[
-                        {
-                          key: "at",
-                          label: "Time (UTC)",
-                          render: (value) => date(value),
-                        },
-                        { key: "method", label: "Method" },
-                        { key: "path", label: "Path" },
-                        { key: "status", label: "Status" },
-                        { key: "duration", label: "Duration (ms)" },
                       ]}
                     />
                   </section>
