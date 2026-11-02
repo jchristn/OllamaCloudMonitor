@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Removed the WORKSPACE heading from the sidebar navigation.
+
 - Removed the Open source label from the sidebar footer while retaining the version.
 
 - Removed the redundant account/session card from the sidebar.

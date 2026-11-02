@@ -734,7 +734,6 @@ export default function App() {
             Ollama<b>Cloud Monitor</b>
           </span>
         </a>
-        <span className="nav-heading">{t("WORKSPACE")}</span>
         <nav>
           {navigation.map((item) => (
             <NavLink

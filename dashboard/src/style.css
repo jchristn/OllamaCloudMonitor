@@ -402,13 +402,7 @@ small {
 .sidebar .brand img {
   width: 32px;
 }
-.nav-heading {
-  font-size: 9px;
-  letter-spacing: 1.4px;
-  color: var(--muted);
-  padding: 0 12px;
-  margin-bottom: 13px;
-}
+
 nav {
   display: flex;
   flex-direction: column;
