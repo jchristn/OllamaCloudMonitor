@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import net from "node:net";
 const root = path.resolve(import.meta.dirname, "..");
 process.chdir(root);
 const services = [];
@@ -12,6 +13,7 @@ function launch(command, args, log) {
   const child = spawn(command, args, {
     env,
     stdio: ["ignore", file, file],
+    detached: process.platform !== "win32",
     shell: process.platform === "win32",
   });
   child.on("error", (error) => console.error(error));
@@ -34,6 +36,19 @@ function run(command, args, options = {}) {
     );
   });
 }
+async function assertPortFree(port) {
+  await new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.once("error", () =>
+      reject(
+        new Error(
+          `Port ${port} is already in use. Stop the existing process before running the suite.`,
+        ),
+      ),
+    );
+    server.listen(port, "127.0.0.1", () => server.close(resolve));
+  });
+}
 async function ready(url) {
   for (let i = 0; i < 150; i++) {
     try {
@@ -48,6 +63,7 @@ async function ready(url) {
   throw new Error(`Service did not start: ${url}. See artifacts/*.log`);
 }
 try {
+  for (const port of [8080, 8081, 9090]) await assertPortFree(port);
   await run("npm", ["run", "build", "--prefix", "dashboard"]);
   await run("npm", ["test", "--prefix", "dashboard"]);
   launch(
@@ -134,6 +150,12 @@ try {
         stop.on("exit", resolve);
         stop.on("error", resolve);
       });
-    else child.kill("SIGINT");
+    else {
+      try {
+        process.kill(-child.pid, "SIGTERM");
+      } catch (error) {
+        if (error.code !== "ESRCH") throw error;
+      }
+    }
   }
 }
