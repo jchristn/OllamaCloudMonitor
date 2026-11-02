@@ -23,9 +23,11 @@ Assets:
 - `compose.yaml`: local image/build, loopback port, runtime environment, read-only filesystem, dropped capabilities and restart policy.
 - `server/Dockerfile`: multi-stage dashboard/server build, non-root runtime with cURL.
 - `.env.example`: empty token template.
-- `update.bat`: pull published images, stop, recreate detached, and list containers; loads local `.env` when present and preserves named volumes.
+- `update.sh` (macOS/Linux) and `update.bat` (Windows): pull published images, stop, recreate detached, and list containers; loads local `.env` when present and preserves named volumes.
 - `factory/reset.bat`: confirmed teardown including named volumes and orphan containers; preserves `.env`. This monitor currently has no persistent volumes.
 
 Health is checked with `curl -f http://127.0.0.1:8080/v1.0/api/health`, every five seconds, timeout three seconds, two retries. It reports monitor liveness, not Ollama connectivity. There are no backing services requiring `depends_on`.
 
 For source updates, pull Git changes and rerun `up --build -d`. The update helper's pull workflow is intended for deployments using a published image. No registry publication is assumed by this repository.
+
+From the repository root, run `./docker/update.sh`. The helper resolves Compose and `.env` paths relative to itself, so it also works when invoked by its path from another directory. It stops on a failed command before proceeding to the next step.
