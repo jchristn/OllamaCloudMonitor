@@ -36,6 +36,13 @@ assumptions:
     verification: On 2026-11-02, 27 managed and 27 Native AOT checks and 18 browser tests passed. The Compose container returned 200 for balance without Authorization and 401 for an explicit invalid key. The synthetic token was supplied only at runtime.
     source: test/Test.Shared/MonitorSuite.cs; dashboard/test/browser/configured-account.spec.js; docker/compose.yaml
     updated_at: '2026-11-02'
+  - id: explorer-query-request-building
+    status: supported
+    claim: In the simulated integration, API explorer edits determine the actual usage query, while balance and health receive no usage query parameters.
+    reason: Browser tests observed the outgoing request URL and matching JSON response through the actual Watson proxy and existing Ollama simulation.
+    verification: On 2026-11-02, the browser sent range=30d, scope=team and group_by=model, then switched to balance with no query string. Parameter values survived switching back to usage. Unit tests checked optional omission and encoded preview generation. The full 26-test browser suite passed. Live Ollama was not called.
+    source: dashboard/test/browser/explorer.spec.js; dashboard/src/utils/explorer.test.js
+    updated_at: '2026-11-02'
 fingerprints:
   - id: initial-local-validation
     date: '2026-11-02'

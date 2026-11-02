@@ -7,11 +7,11 @@ Verified locally on 2026-11-02, macOS ARM64, Node 24.21.0, .NET SDK 10.0.401, an
 | Production dashboard build | Passed |
 | Managed Watson HTTP integration suite | 27 checks passed |
 | Native AOT shared HTTP integration suite | 27 checks passed |
-| Frontend accounting and locale unit tests | 7 tests passed |
-| Browser integration and responsive tests | 18 tests passed |
+| Frontend accounting, request-building and locale unit tests | 10 tests passed |
+| Browser integration and responsive tests | 26 tests passed |
 | Postman collection | 4 requests, 12 assertions, 0 failures |
 | OpenAPI syntax and collection lint | Passed, 0 issues |
-| i18n structural checks | 140 keys across 6 locales; key parity, usage, interpolation and encoding passed |
+| i18n structural checks | 146 keys across 6 locales; key parity, usage, interpolation and encoding passed |
 | Dependency audit | 0 known vulnerabilities reported by npm audit |
 | Docker image | Built successfully with official .NET Alpine runtime |
 | Docker smoke test | Non-root, read-only container returned 200 for health and reached healthy state |
@@ -34,3 +34,9 @@ The relocated docker/server/Dockerfile builds successfully. A Compose deployment
 ## Request History removal
 
 Removed the Request History route, navigation entry, client-side request recording and unused translations at the user's request. Updated route coverage verifies the navigation entry is absent. The full suite passed with 7 unit tests, 18 browser tests, 27 managed and 27 Native AOT HTTP checks, 12 Postman assertions, and 140 translation keys across six locales. The main test server used MONITOR_TEST_PORT=18080 because port 8080 was already occupied; the existing service was left running. Updated dashboard preview assets reflect the current navigation.
+
+## API explorer query controls and alignment
+
+The explorer now reads each supported GET operation's query parameters from OpenAPI, seeds defaults from the dashboard selection, and keeps its edited values independent. Empty optional values are omitted and query parameters are filtered by the selected endpoint. The request preview uses URLSearchParams, matching the shared API client's encoded request. When the server contract cannot load, the same checked-in contract is bundled as a fallback, including its query definitions.
+
+The full local suite passed on port 18080: 10 unit tests, 26 browser tests, 27 managed HTTP checks, 27 Native AOT HTTP checks and 12 Postman assertions. New browser coverage observed a real HTTP usage request with range=30d, scope=team and group_by=model, its matching response, a balance request with no query string, parameter retention across endpoint changes, and query controls under the fallback contract. Browser geometry assertions confirmed matching selector/button heights and top alignment within 0.5px at 1440, 820 and 390 pixels in both themes. Generated desktop and mobile explorer screenshots were visually reviewed. The Docker image builds with the canonical fallback contract included in its build stage. Authenticated live Ollama behavior remains unverified; requests used the existing local simulation.

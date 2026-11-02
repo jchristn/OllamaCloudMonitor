@@ -42,6 +42,7 @@ import {
 } from "./utils/usage";
 import { DataTable, JsonModal, CopyButton } from "./components/Primitives";
 import UsageChart from "./components/UsageChart";
+import ApiExplorer from "./views/ApiExplorer";
 const repo = "https://github.com/jchristn/OllamaCloudMonitor";
 /** Main application shell and session lifecycle. */
 export default function App() {
@@ -872,7 +873,7 @@ export default function App() {
             <Route
               path="/dashboard/api-explorer"
               element={
-                <Explorer
+                <ApiExplorer
                   client={client}
                   range={range}
                   scope={scope}
@@ -1036,109 +1037,5 @@ function BalancePanel({ balance, number, date }) {
         )}
       </div>
     </section>
-  );
-}
-function Explorer({ client, range, scope, onError }) {
-  const { t } = useTranslation();
-  const [operations, setOperations] = useState([]);
-  const [operation, setOperation] = useState("usage");
-  const [response, setResponse] = useState(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [fallback, setFallback] = useState(false);
-  useEffect(() => {
-    let live = true;
-    client
-      .request("openapi")
-      .then((spec) => {
-        if (live)
-          setOperations(
-            Object.keys(spec.paths)
-              .filter((path) => path.includes("/api/"))
-              .map((path) => path.split("/").at(-1)),
-          );
-      })
-      .catch(() => {
-        if (live) {
-          setFallback(true);
-          setOperations(["usage", "balance", "health"]);
-        }
-      });
-    return () => {
-      live = false;
-    };
-  }, [client]);
-  async function execute() {
-    setLoading(true);
-    setError("");
-    setResponse(null);
-    try {
-      setResponse(
-        await client.request(
-          operation,
-          operation === "usage" ? { range, scope, group_by: "model" } : {},
-          { force: true },
-        ),
-      );
-    } catch (err) {
-      setError(err.message === "rateLimited" ? "rateLimited" : "requestFailed");
-      onError(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-  return (
-    <>
-      <PageTitle
-        title="API explorer"
-        description="Execute read-only operations with your current bearer session."
-      />
-      <section className="panel explorer">
-        <p>
-          {t(
-            fallback
-              ? "Curated fallback: the OpenAPI document could not be loaded."
-              : "Operations loaded from the monitor OpenAPI contract.",
-          )}
-        </p>
-        <div className="explorer-controls">
-          <span className="method">GET</span>
-          <select
-            aria-label={t("Operation")}
-            value={operation}
-            onChange={(e) => {
-              setOperation(e.target.value);
-              setResponse(null);
-            }}
-          >
-            {operations.map((value) => (
-              <option key={value}>{value}</option>
-            ))}
-          </select>
-          <button
-            className="primary"
-            disabled={loading || !operations.length}
-            onClick={execute}
-          >
-            {t(loading ? "Loading…" : "Execute")}
-          </button>
-        </div>
-        <code>
-          {operation === "usage"
-            ? `/v1.0/api/usage?range=${range}&scope=${scope}&group_by=model`
-            : `/v1.0/api/${operation}`}
-        </code>
-        {error && (
-          <p role="alert" className="notice error">
-            {t(error)}
-          </p>
-        )}
-        <pre>
-          {response
-            ? JSON.stringify(response, null, 2)
-            : t("Execute a request to inspect its JSON response.")}
-        </pre>
-      </section>
-    </>
   );
 }

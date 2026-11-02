@@ -36,7 +36,7 @@ const dynamic = [
   "Model",
   "Session limit",
   "Weekly limit",
-  "Curated fallback: the OpenAPI document could not be loaded.",
+  "Bundled fallback: the server OpenAPI document could not be loaded.",
   "Operations loaded from the monitor OpenAPI contract.",
   "Execute",
   "Ollama Cloud",

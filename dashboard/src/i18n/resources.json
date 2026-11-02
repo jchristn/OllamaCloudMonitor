@@ -29,7 +29,6 @@
       "Copy": "Copy",
       "Cost (USD)": "Cost (USD)",
       "Credit balance": "Credit balance",
-      "Curated fallback: the OpenAPI document could not be loaded.": "Curated fallback: the OpenAPI document could not be loaded.",
       "Current account-wide credits": "Current account-wide credits",
       "Current shared account balance": "Current shared account balance",
       "Demo mode": "Demo mode",
@@ -140,7 +139,14 @@
       "unauthorized": "Ollama rejected the token. Check your API key and reconnect.",
       "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.",
       "Open configured account": "Open configured account",
-      "Configured token stays on the server.": "Configured token stays on the server."
+      "Configured token stays on the server.": "Configured token stays on the server.",
+      "Group by": "Group by",
+      "Query parameters": "Query parameters",
+      "Edit values for this request. Changes do not affect overview filters.": "Edit values for this request. Changes do not affect overview filters.",
+      "Default (omit parameter)": "Default (omit parameter)",
+      "This endpoint has no query parameters.": "This endpoint has no query parameters.",
+      "Request URL": "Request URL",
+      "Bundled fallback: the server OpenAPI document could not be loaded.": "Bundled fallback: the server OpenAPI document could not be loaded."
     }
   },
   "es": {
@@ -173,7 +179,6 @@
       "Copy": "Copiar",
       "Cost (USD)": "Coste (USD)",
       "Credit balance": "Saldo de créditos",
-      "Curated fallback: the OpenAPI document could not be loaded.": "Lista alternativa: no se pudo cargar el documento OpenAPI.",
       "Current account-wide credits": "Créditos actuales de la cuenta",
       "Current shared account balance": "Saldo compartido actual de la cuenta",
       "Demo mode": "Modo de demostración",
@@ -284,7 +289,14 @@
       "unauthorized": "Ollama rechazó el token. Comprueba la clave y vuelve a conectar.",
       "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "Hay una cuenta de Ollama configurada en el servidor. Quien acceda a este monitor puede ver su uso.",
       "Open configured account": "Abrir cuenta configurada",
-      "Configured token stays on the server.": "El token configurado permanece en el servidor."
+      "Configured token stays on the server.": "El token configurado permanece en el servidor.",
+      "Group by": "Agrupar por",
+      "Query parameters": "Parámetros de consulta",
+      "Edit values for this request. Changes do not affect overview filters.": "Edita los valores de esta solicitud. Los cambios no afectan a los filtros del resumen.",
+      "Default (omit parameter)": "Predeterminado (omitir parámetro)",
+      "This endpoint has no query parameters.": "Este endpoint no tiene parámetros de consulta.",
+      "Request URL": "URL de la solicitud",
+      "Bundled fallback: the server OpenAPI document could not be loaded.": "Definición incluida: no se pudo cargar el documento OpenAPI del servidor."
     }
   },
   "ja": {
@@ -317,7 +329,6 @@
       "Copy": "コピー",
       "Cost (USD)": "費用 (USD)",
       "Credit balance": "クレジット残高",
-      "Curated fallback: the OpenAPI document could not be loaded.": "OpenAPI文書を読み込めなかったため、既定の一覧を使用します。",
       "Current account-wide credits": "現在のアカウント全体のクレジット",
       "Current shared account balance": "現在の共有アカウント残高",
       "Demo mode": "デモモード",
@@ -428,7 +439,14 @@
       "unauthorized": "Ollamaがトークンを拒否しました。キーを確認して再接続してください。",
       "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "サーバーにOllamaアカウントが設定されています。この監視アプリにアクセスできる人は利用状況を閲覧できます。",
       "Open configured account": "設定済みアカウントを開く",
-      "Configured token stays on the server.": "設定済みトークンはサーバー内で保持されます。"
+      "Configured token stays on the server.": "設定済みトークンはサーバー内で保持されます。",
+      "Group by": "グループ化",
+      "Query parameters": "クエリパラメーター",
+      "Edit values for this request. Changes do not affect overview filters.": "このリクエストの値を編集します。概要のフィルターには影響しません。",
+      "Default (omit parameter)": "既定値（パラメーターを省略）",
+      "This endpoint has no query parameters.": "このエンドポイントにはクエリパラメーターがありません。",
+      "Request URL": "リクエストURL",
+      "Bundled fallback: the server OpenAPI document could not be loaded.": "サーバーのOpenAPI文書を取得できないため、同梱の定義を使用します。"
     }
   },
   "ar": {
@@ -461,7 +479,6 @@
       "Copy": "نسخ",
       "Cost (USD)": "التكلفة (USD)",
       "Credit balance": "رصيد الاعتمادات",
-      "Curated fallback: the OpenAPI document could not be loaded.": "قائمة بديلة: تعذر تحميل مستند OpenAPI.",
       "Current account-wide credits": "اعتمادات الحساب الحالية",
       "Current shared account balance": "الرصيد المشترك الحالي للحساب",
       "Demo mode": "وضع تجريبي",
@@ -572,7 +589,14 @@
       "unauthorized": "رفضت Ollama الرمز. تحقق من المفتاح وأعد الاتصال.",
       "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "تم إعداد حساب Ollama على الخادم. يمكن لأي شخص يصل إلى هذا المراقب عرض استخدامه.",
       "Open configured account": "فتح الحساب المُعدّ",
-      "Configured token stays on the server.": "يبقى الرمز المُعدّ على الخادم."
+      "Configured token stays on the server.": "يبقى الرمز المُعدّ على الخادم.",
+      "Group by": "التجميع حسب",
+      "Query parameters": "معلمات الاستعلام",
+      "Edit values for this request. Changes do not affect overview filters.": "عدّل قيم هذا الطلب. لا تؤثر التغييرات على مرشحات النظرة العامة.",
+      "Default (omit parameter)": "الافتراضي (حذف المعلمة)",
+      "This endpoint has no query parameters.": "لا توجد معلمات استعلام لنقطة النهاية هذه.",
+      "Request URL": "عنوان الطلب",
+      "Bundled fallback: the server OpenAPI document could not be loaded.": "تعذر تحميل مستند OpenAPI من الخادم، لذا يُستخدم التعريف المضمّن."
     }
   },
   "en-XA": {
@@ -605,7 +629,6 @@
       "Copy": "⟦ Copy ····· ⟧",
       "Cost (USD)": "⟦ Cost (USD) ····· ⟧",
       "Credit balance": "⟦ Credit balance ····· ⟧",
-      "Curated fallback: the OpenAPI document could not be loaded.": "⟦ Curated fallback: the OpenAPI document could not be loaded. ····· ⟧",
       "Current account-wide credits": "⟦ Current account-wide credits ····· ⟧",
       "Current shared account balance": "⟦ Current shared account balance ····· ⟧",
       "Demo mode": "⟦ Demo mode ····· ⟧",
@@ -716,7 +739,14 @@
       "unauthorized": "⟦ Ollama rejected the token. Check your API key and reconnect. ····· ⟧",
       "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "⟦ A server-side Ollama account is configured. Anyone with access to this monitor can view its usage. ····· ⟧",
       "Open configured account": "⟦ Open configured account ····· ⟧",
-      "Configured token stays on the server.": "⟦ Configured token stays on the server. ····· ⟧"
+      "Configured token stays on the server.": "⟦ Configured token stays on the server. ····· ⟧",
+      "Group by": "⟦ Group by ····· ⟧",
+      "Query parameters": "⟦ Query parameters ····· ⟧",
+      "Edit values for this request. Changes do not affect overview filters.": "⟦ Edit values for this request. Changes do not affect overview filters. ····· ⟧",
+      "Default (omit parameter)": "⟦ Default (omit parameter) ····· ⟧",
+      "This endpoint has no query parameters.": "⟦ This endpoint has no query parameters. ····· ⟧",
+      "Request URL": "⟦ Request URL ····· ⟧",
+      "Bundled fallback: the server OpenAPI document could not be loaded.": "⟦ Bundled fallback: the server OpenAPI document could not be loaded. ····· ⟧"
     }
   },
   "ar-XB": {
@@ -749,7 +779,6 @@
       "Copy": "‮Copy‬",
       "Cost (USD)": "‮Cost (USD)‬",
       "Credit balance": "‮Credit balance‬",
-      "Curated fallback: the OpenAPI document could not be loaded.": "‮Curated fallback: the OpenAPI document could not be loaded.‬",
       "Current account-wide credits": "‮Current account-wide credits‬",
       "Current shared account balance": "‮Current shared account balance‬",
       "Demo mode": "‮Demo mode‬",
@@ -860,7 +889,14 @@
       "unauthorized": "‮Ollama rejected the token. Check your API key and reconnect.‬",
       "A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.": "‮A server-side Ollama account is configured. Anyone with access to this monitor can view its usage.‬",
       "Open configured account": "‮Open configured account‬",
-      "Configured token stays on the server.": "‮Configured token stays on the server.‬"
+      "Configured token stays on the server.": "‮Configured token stays on the server.‬",
+      "Group by": "‮Group by‬",
+      "Query parameters": "‮Query parameters‬",
+      "Edit values for this request. Changes do not affect overview filters.": "‮Edit values for this request. Changes do not affect overview filters.‬",
+      "Default (omit parameter)": "‮Default (omit parameter)‬",
+      "This endpoint has no query parameters.": "‮This endpoint has no query parameters.‬",
+      "Request URL": "‮Request URL‬",
+      "Bundled fallback: the server OpenAPI document could not be loaded.": "‮Bundled fallback: the server OpenAPI document could not be loaded.‬"
     }
   }
 }

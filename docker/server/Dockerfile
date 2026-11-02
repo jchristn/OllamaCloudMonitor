@@ -3,6 +3,7 @@ WORKDIR /build/dashboard
 COPY dashboard/package*.json ./
 RUN npm ci
 COPY dashboard/ ./
+COPY postman/specs/monitor.openapi.json /build/postman/specs/monitor.openapi.json
 RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS server

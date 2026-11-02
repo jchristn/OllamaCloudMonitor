@@ -12,7 +12,7 @@ A private, read-only dashboard for Ollama Cloud usage and credit balances. Conne
 - 24-hour, 7-day and 30-day usage plots with cost, requests, input, cached input and output tokens.
 - Self/team scope, model selection, model comparison and selected-series CSV export.
 - Current included + purchased credit balance, monthly allowance and reset times; legacy plan limit support.
-- JSON inspectors and an OpenAPI-driven API explorer.
+- JSON inspectors and an OpenAPI-driven API explorer with editable query parameters and an encoded request preview.
 - Light/dark themes, responsive layouts, English, Spanish, Japanese, Arabic and layout-testing pseudo-locales.
 - A clearly marked synthetic demo. It works without an API key.
 
@@ -35,6 +35,8 @@ dotnet run --project src/OllamaCloudMonitor.Server -c Release
 Open **http://127.0.0.1:8080**. Choose **Explore demo dashboard**, or create an API key at [Ollama settings](https://ollama.com/settings/keys), paste the key into the bearer-token field, and select **Open dashboard**. Either the raw key or `Bearer <key>` is accepted. The server verifies access by fetching usage. Team usage requires an Ollama team administrator.
 
 Choose a timeframe and model to update the plot and usage totals. Hover or keyboard-focus a bar for its exact value; press Enter or click for the bucket JSON. Use **Export CSV** for the selected series. Balance always shows the entire account. Settings offers optional one-minute foreground refresh. Sign out clears session data and the key; page refresh requires signing in again.
+
+In **API explorer**, select an endpoint and edit its query controls before choosing **Execute**. Usage exposes `range`, `scope`, and `group_by`, using the allowed values from OpenAPI. Choose **Default (omit parameter)** to leave an optional value out. Balance and health have no query parameters. The encoded request path updates immediately; explorer changes do not change the overview filters.
 
 For frontend development, run the server above and `npm run dev --prefix dashboard` in a second terminal. Vite proxies the API to `127.0.0.1:8080`; use the URL Vite prints.
 

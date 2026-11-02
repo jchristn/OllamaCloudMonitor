@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added editable OpenAPI query parameters and accurate request previews to the API explorer, including endpoint-specific parameter handling and bundled contract fallback.
+- Aligned the API endpoint selector and Execute button heights across responsive layouts.
+
 - Removed Request History navigation, page and browser request recording because Ollama exposes no individual request-history API.
 
 - Organized Docker assets under docker/, with a server Dockerfile, environment template, deployment guide, update helper and confirmed factory reset.
