@@ -13,7 +13,7 @@ A private, read-only dashboard for Ollama Cloud usage and credit balances. Conne
 - Self/team scope, model selection, model comparison and selected-series CSV export.
 - Current included + purchased credit balance, monthly allowance and reset times; legacy plan limit support.
 - JSON inspectors and an OpenAPI-driven API explorer with editable query parameters and an encoded request preview.
-- Light/dark themes, responsive layouts, English, Spanish, Japanese, Arabic and layout-testing pseudo-locales.
+- Light/dark themes, responsive layouts, all twelve baseline languages (English, Spanish, Brazilian Portuguese, French, Italian, German, Simplified Chinese, Arabic, Russian, Malay, Hindi and Japanese), plus layout-testing pseudo-locales.
 - A clearly marked synthetic demo. It works without an API key.
 
 The upstream [usage API](https://docs.ollama.com/api/cloud-usage) permits only `24h`, `7d`, and `30d`. It returns at most ten named models plus an “other models” remainder. Model filtering operates locally within that response. Custom dates and individual inference request history are unavailable.

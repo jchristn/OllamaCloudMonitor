@@ -1,7 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { availableBalance, metricValue, usageCsv, csvCell } from "./usage";
 import { demoUsage } from "./demo";
-import resources from "../i18n/resources.json";
+const catalogs = import.meta.glob("../i18n/locales/*.json", {
+  eager: true,
+  import: "default",
+});
+const resources = Object.fromEntries(
+  Object.entries(catalogs).map(([file, translation]) => [
+    file.split("/").at(-1).slice(0, -5),
+    { translation },
+  ]),
+);
 describe("Ollama usage accounting", () => {
   it("uses authoritative totals including the remainder", () => {
     const totals = {
@@ -73,7 +82,20 @@ describe("locale catalogs", () => {
     }
   });
   it("formats currencies, dates and counts for Latin, CJK and RTL locale families", () => {
-    for (const locale of ["en", "es", "ja", "ar"]) {
+    for (const locale of [
+      "en",
+      "es",
+      "pt-BR",
+      "fr",
+      "it",
+      "de",
+      "zh-Hans",
+      "ar",
+      "ru",
+      "ms",
+      "hi",
+      "ja",
+    ]) {
       expect(
         new Intl.NumberFormat(locale, {
           style: "currency",

@@ -92,7 +92,21 @@ for (const viewport of [
         ).toBeVisible();
       }
     });
-for (const locale of ["es", "ja", "ar", "en-XA", "ar-XB"])
+for (const locale of [
+  "es",
+  "pt-BR",
+  "fr",
+  "it",
+  "de",
+  "zh-Hans",
+  "ar",
+  "ru",
+  "ms",
+  "hi",
+  "ja",
+  "en-XA",
+  "ar-XB",
+])
   test(`locale ${locale} persists before and after login`, async ({ page }) => {
     await page.goto("/");
     await page.locator(".language select").selectOption(locale);

@@ -1577,3 +1577,29 @@ pre {
 .configured-account button {
   width: 100%;
 }
+/* Use installed script-aware fonts without loading third-party font services. */
+html:lang(zh) {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+    "Noto Sans CJK SC", sans-serif;
+}
+html:lang(ja) {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic",
+    "Noto Sans CJK JP", sans-serif;
+}
+html:lang(hi) {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Nirmala UI", "Noto Sans Devanagari",
+    sans-serif;
+}
+html:lang(ar) {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Arabic",
+    sans-serif;
+}
+
+.explorer pre.response-placeholder {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

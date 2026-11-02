@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added complete Portuguese (Brazil), French, Italian, German, Simplified Chinese, Russian, Malay and Hindi translations, covering all twelve baseline languages.
+- Split translations into lazy-loaded catalogs, expanded locale metadata and regional aliases, and added language persistence, mobile route and initial-paint checks.
+
 - Enabled automatic refresh by default while preserving saved preferences.
 
 - Added editable OpenAPI query parameters and accurate request previews to the API explorer, including endpoint-specific parameter handling and bundled contract fallback.

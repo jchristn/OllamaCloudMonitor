@@ -2,10 +2,41 @@ import fs from "node:fs";
 import path from "node:path";
 import assert from "node:assert/strict";
 import { parse } from "../dashboard/node_modules/@babel/parser/lib/index.js";
+import { locales } from "../dashboard/src/i18n/localeRegistry.js";
 const root = path.resolve(import.meta.dirname, "../dashboard/src");
-const resources = JSON.parse(
-  fs.readFileSync(path.join(root, "i18n/resources.json"), "utf8"),
+const catalogDirectory = path.join(root, "i18n/locales");
+const resources = Object.fromEntries(
+  fs
+    .readdirSync(catalogDirectory)
+    .filter((name) => name.endsWith(".json"))
+    .map((name) => [
+      name.slice(0, -5),
+      {
+        translation: JSON.parse(
+          fs.readFileSync(path.join(catalogDirectory, name), "utf8"),
+        ),
+      },
+    ]),
 );
+assert.deepEqual(
+  Object.keys(resources).sort(),
+  locales.map((locale) => locale.code).sort(),
+  "Registry and catalogs must match",
+);
+for (const locale of locales) {
+  assert(
+    locale.name &&
+      locale.englishName &&
+      ["ltr", "rtl"].includes(locale.dir) &&
+      locale.fallback === "en",
+    `Incomplete metadata: ${locale.code}`,
+  );
+  assert.equal(
+    Intl.getCanonicalLocales(locale.code)[0],
+    locale.code,
+    `Noncanonical locale: ${locale.code}`,
+  );
+}
 const keys = new Set(Object.keys(resources.en.translation));
 const used = new Set();
 // Dynamically selected semantic messages and wire-enum label mappings are explicit here.

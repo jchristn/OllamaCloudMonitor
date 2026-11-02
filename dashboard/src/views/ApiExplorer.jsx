@@ -216,7 +216,7 @@ export default function ApiExplorer({ client, range, scope, onError }) {
             {t(error)}
           </p>
         )}
-        <pre>
+        <pre className={response ? undefined : "response-placeholder"}>
           {response
             ? JSON.stringify(response, null, 2)
             : t("Execute a request to inspect its JSON response.")}
