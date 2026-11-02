@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added shared workspace-contained hover/focus tooltips above usage charts, model-share bars and the credit meter, with UTC timestamps, full metrics, scroll/resize positioning, keyboard dismissal and touch inspection.
+
 - Removed the WORKSPACE heading from the sidebar navigation.
 
 - Removed the Open source label from the sidebar footer while retaining the version.

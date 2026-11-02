@@ -1573,3 +1573,64 @@ html:lang(ar) {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+/* Portal to the workspace escapes chart/panel clipping while staying above plots. */
+.chart-tooltip {
+  position: fixed;
+  z-index: 80;
+  pointer-events: none;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px #0003;
+  padding: 13px 15px;
+  overflow: hidden;
+  text-align: start;
+}
+.chart-tooltip-title {
+  font-size: 12px;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.chart-tooltip-time {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.chart-tooltip dl {
+  margin: 10px 0 0;
+}
+.chart-tooltip-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 5px 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.chart-tooltip-row dt {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.chart-tooltip-row dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.chart-tooltip-row.emphasized {
+  font-weight: 650;
+}
+.chart-tooltip-row.emphasized dt {
+  color: var(--text);
+}
+.chart-tooltip-footer {
+  margin-top: 9px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.chart-hit-area {
+  touch-action: manipulation;
+}

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { metricValue } from "../utils/usage";
+import { useChartTooltip, useChartDetails } from "./ChartTooltip";
 /** Responsive SVG plot with focusable buckets, exact values, and partial interval labels. */
 export default function UsageChart({
   usage,
@@ -20,7 +21,46 @@ export default function UsageChart({
     observer.observe(chartRef.current);
     return () => observer.disconnect();
   }, []);
-  const [active, setActive] = useState(null);
+  const details = useChartDetails();
+  const { showTooltip, hideTooltip, tooltipId, activeTarget } =
+    useChartTooltip();
+  const chartId = useId();
+  const lastTouch = useRef(null);
+  const touchPointer = useRef(false);
+  const active = activeTarget?.id.startsWith(chartId + "-")
+    ? Number(activeTarget.dataset.bucketIndex)
+    : null;
+  function show(event, bucket) {
+    showTooltip(
+      event,
+      {
+        title:
+          model === "all"
+            ? t("All models")
+            : model === "remainder"
+              ? t("Other models")
+              : model,
+        subtitle: details.period(bucket.from, bucket.until),
+        rows: details.usageRows(bucket, model, metric),
+        footer: bucket.partial ? t("Partial bucket") : undefined,
+      },
+      event.currentTarget.nextElementSibling,
+    );
+  }
+  function inspect(event, bucket) {
+    if (
+      (touchPointer.current || event.nativeEvent.pointerType === "touch") &&
+      (lastTouch.current !== event.currentTarget ||
+        activeTarget !== event.currentTarget)
+    ) {
+      lastTouch.current = event.currentTarget;
+      show(event, bucket);
+      return;
+    }
+    lastTouch.current = null;
+    hideTooltip();
+    onInspect(bucket);
+  }
   const values = usage.buckets.map((bucket) =>
     metricValue(bucket, model, metric),
   );
@@ -73,17 +113,27 @@ export default function UsageChart({
                 width={step}
                 height={bottom - top}
                 fill="transparent"
+                className="chart-hit-area"
                 tabIndex={0}
+                id={chartId + "-" + i}
+                data-bucket-index={i}
+                aria-describedby={active === i ? tooltipId : undefined}
                 role="button"
                 aria-label={`${date(bucket.from)}: ${format(value)}${bucket.partial ? " " + t("Partial bucket") : ""}`}
-                onFocus={() => setActive(i)}
-                onBlur={() => setActive(null)}
-                onMouseEnter={() => setActive(i)}
-                onMouseLeave={() => setActive(null)}
-                onClick={() => onInspect(bucket)}
+                onFocus={(event) => show(event, bucket)}
+                onBlur={hideTooltip}
+                onMouseEnter={(event) => show(event, bucket)}
+                onMouseMove={(event) => show(event, bucket)}
+                onMouseLeave={hideTooltip}
+                onPointerDown={(event) => {
+                  touchPointer.current = event.pointerType === "touch";
+                  if (touchPointer.current) show(event, bucket);
+                }}
+                onClick={(event) => inspect(event, bucket)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
+                    hideTooltip();
                     onInspect(bucket);
                   }
                 }}
@@ -114,20 +164,10 @@ export default function UsageChart({
           );
         })}
       </svg>
-      <div className="chart-caption" aria-live="polite">
-        {active != null ? (
-          <>
-            <b>{date(usage.buckets[active].from)}</b>
-            <span>{format(values[active])}</span>
-            {usage.buckets[active].partial && (
-              <span className="tag">{t("Partial bucket")}</span>
-            )}
-          </>
-        ) : (
-          <span>
-            {t("Hover or focus a bar to inspect. All intervals are UTC.")}
-          </span>
-        )}
+      <div className="chart-caption">
+        <span>
+          {t("Hover or focus a bar to inspect. All intervals are UTC.")}
+        </span>
       </div>
     </div>
   );

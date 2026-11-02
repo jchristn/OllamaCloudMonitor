@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   NavLink,
   Navigate,
@@ -43,6 +43,12 @@ import {
 import { DataTable, JsonModal, CopyButton } from "./components/Primitives";
 import UsageChart from "./components/UsageChart";
 import ApiExplorer from "./views/ApiExplorer";
+import ModelBreakdown from "./components/ModelBreakdown";
+import {
+  ChartTooltipProvider,
+  useChartTooltip,
+  useChartDetails,
+} from "./components/ChartTooltip";
 const repo = "https://github.com/jchristn/OllamaCloudMonitor";
 /** Main application shell and session lifecycle. */
 export default function App() {
@@ -65,6 +71,7 @@ export default function App() {
   const [metric, setMetric] = useState("usage_usd");
   const [usage, setUsage] = useState(null);
   const [balance, setBalance] = useState(null);
+  const [balanceUpdated, setBalanceUpdated] = useState(null);
   const [balanceError, setBalanceError] = useState("");
   const [updated, setUpdated] = useState(null);
   const [refresh, setRefresh] = useState(0);
@@ -106,6 +113,7 @@ export default function App() {
       setToken("");
       setUsage(null);
       setBalance(null);
+      setBalanceUpdated(null);
       setUpdated(null);
       setDetail(null);
     };
@@ -150,6 +158,7 @@ export default function App() {
     setToken("");
     setUsage(null);
     setBalance(null);
+    setBalanceUpdated(null);
     setUpdated(null);
     setError("");
     setBalanceError("");
@@ -226,6 +235,9 @@ export default function App() {
       .then((data) => {
         if (live) {
           setBalance(data);
+          setBalanceUpdated(
+            new Date(client.cache.get("/v1.0/api/balance")?.time ?? Date.now()),
+          );
           setBalanceError("");
         }
       })
@@ -234,6 +246,7 @@ export default function App() {
           if (err.status === 401) handleError(err);
           else {
             setBalance(null);
+            setBalanceUpdated(null);
             setBalanceError(
               err.message === "rateLimited" ? "rateLimited" : "balanceFailed",
             );
@@ -660,55 +673,19 @@ export default function App() {
             </div>
           )}
         </section>
-        <BalancePanel balance={balance} number={number} date={date} />
+        <BalancePanel
+          balance={balance}
+          updated={balanceUpdated}
+          number={number}
+          date={date}
+        />
       </div>
-      <section className="panel">
-        <div className="panel-heading">
-          <div>
-            <h2>{t("Model breakdown")}</h2>
-            <p>
-              {t(
-                "Top models for the selected timeframe. Filter locally within the returned groups.",
-              )}
-            </p>
-          </div>
-          <NavLink to="/dashboard/models">
-            {t("View all")}
-            <ArrowUpRight size={15} />
-          </NavLink>
-        </div>
-        {modelRows.slice(0, 4).map((group, i) => (
-          <button
-            className="model-row"
-            key={group.model}
-            onClick={() =>
-              setModel(
-                group.model === t("Other models") ? "remainder" : group.model,
-              )
-            }
-          >
-            <span className={`model-swatch swatch-${i % 3}`} />
-            <span className="model-name">
-              {group.model}
-              <small>
-                {number(group.request_count)} {t("Requests")}
-              </small>
-            </span>
-            <div className="model-track">
-              <span
-                style={{
-                  width: `${usage.totals.usage_usd ? Math.min(100, ((group.usage_usd ?? 0) / usage.totals.usage_usd) * 100) : 0}%`,
-                }}
-              />
-            </div>
-            <strong>{number(group.usage_usd, true)}</strong>
-            <ChevronRight size={15} />
-          </button>
-        ))}
-        {!modelRows.length && (
-          <div className="empty">{t("No records found")}</div>
-        )}
-      </section>
+      <ModelBreakdown
+        usage={usage}
+        rows={modelRows}
+        number={number}
+        onSelect={setModel}
+      />
       <div className="footnotes">
         <span>
           <CircleHelp size={14} />
@@ -726,223 +703,225 @@ export default function App() {
     </>
   );
   return (
-    <div className="app-shell">
-      <aside className={menu ? "sidebar open" : "sidebar"}>
-        <a className="brand" href="/dashboard/home">
-          <img src="/assets/ollama.png" alt="Ollama" />
-          <span>
-            Ollama<b>Cloud Monitor</b>
-          </span>
-        </a>
-        <nav>
-          {navigation.map((item) => (
-            <NavLink
-              to={"/dashboard/" + item.path}
-              onClick={() => setMenu(false)}
-              key={item.path}
-            >
-              <item.icon size={18} />
-              {t(item.label)}
-              <ChevronRight className="nav-arrow" size={14} />
-            </NavLink>
-          ))}
-        </nav>
-        <div className="sidebar-bottom">
-          <a
-            href="https://docs.ollama.com/api/cloud-usage"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <CircleHelp size={16} />
-            {t("Documentation")}
-            <ExternalLink size={13} />
-          </a>
-          <div className="version">v0.1.0</div>
-        </div>
-      </aside>
-      <div className="main-shell">
-        <header className="topbar">
-          <button
-            className="mobile-menu icon"
-            aria-label={t("Toggle navigation")}
-            onClick={() => setMenu(!menu)}
-          >
-            {menu ? <X size={18} /> : <Menu size={18} />}
-          </button>
-          <div className="breadcrumbs">
-            {t("Workspace")}
-            <ChevronRight size={13} />
-            <span>{t("Cloud activity")}</span>
-          </div>
-          <div className="utilities">
-            <span className="live-status">
-              <span className="status-dot" />
-              {t(client.demo ? "Demo mode" : "Connected")}
-            </span>
-            {controls}
-            <a href={repo} aria-label={t("GitHub repository")}>
-              <Github size={18} />
-            </a>
-            <button
-              className="icon"
-              onClick={logout}
-              aria-label={t("Sign out")}
-            >
-              <LogOut size={18} />
-            </button>
-          </div>
-        </header>
-        {client.demo && (
-          <div className="demo-banner">
-            {t("Demo mode: all usage and balance values are synthetic.")}
-            <button onClick={logout}>
-              {t("Connect real account")}
-              <ArrowUpRight size={14} />
-            </button>
-          </div>
-        )}
-        <main className="content">
-          <div className="refresh-line">
+    <ChartTooltipProvider>
+      <div className="app-shell">
+        <aside className={menu ? "sidebar open" : "sidebar"}>
+          <a className="brand" href="/dashboard/home">
+            <img src="/assets/ollama.png" alt="Ollama" />
             <span>
-              {updated
-                ? `${t("Updated")} ${date(updated)} UTC`
-                : t("Awaiting data")}
+              Ollama<b>Cloud Monitor</b>
             </span>
-            <button disabled={busy || retryAt > now} onClick={refreshData}>
-              <RefreshCw size={14} className={busy ? "spinning" : ""} />
-              {t("Refresh")}
-            </button>
+          </a>
+          <nav>
+            {navigation.map((item) => (
+              <NavLink
+                to={"/dashboard/" + item.path}
+                onClick={() => setMenu(false)}
+                key={item.path}
+              >
+                <item.icon size={18} />
+                {t(item.label)}
+                <ChevronRight className="nav-arrow" size={14} />
+              </NavLink>
+            ))}
+          </nav>
+          <div className="sidebar-bottom">
+            <a
+              href="https://docs.ollama.com/api/cloud-usage"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <CircleHelp size={16} />
+              {t("Documentation")}
+              <ExternalLink size={13} />
+            </a>
+            <div className="version">v0.1.0</div>
           </div>
-          <Routes>
-            <Route path="/dashboard/home" element={overview} />
-            <Route
-              path="/dashboard/models"
-              element={
-                <>
-                  <PageTitle
-                    title="Models"
-                    description="Compare the returned model groups. Ollama returns at most ten named models, plus other models."
-                  />
-                  {filters}
-                  {error && notice(error)}
-                  <section className="panel">
-                    <DataTable
-                      rows={modelRows}
-                      searchKey="model"
-                      columns={[
-                        { key: "model", label: "Model" },
-                        {
-                          key: "usage_usd",
-                          label: "Cost (USD)",
-                          render: (value) => number(value, true),
-                        },
-                        {
-                          key: "request_count",
-                          label: "Requests",
-                          render: (value) => number(value),
-                        },
-                        {
-                          key: "input_tokens",
-                          label: "Input tokens",
-                          render: (value) => number(value),
-                        },
-                        {
-                          key: "output_tokens",
-                          label: "Output tokens",
-                          render: (value) => number(value),
-                        },
-                      ]}
+        </aside>
+        <div className="main-shell">
+          <header className="topbar">
+            <button
+              className="mobile-menu icon"
+              aria-label={t("Toggle navigation")}
+              onClick={() => setMenu(!menu)}
+            >
+              {menu ? <X size={18} /> : <Menu size={18} />}
+            </button>
+            <div className="breadcrumbs">
+              {t("Workspace")}
+              <ChevronRight size={13} />
+              <span>{t("Cloud activity")}</span>
+            </div>
+            <div className="utilities">
+              <span className="live-status">
+                <span className="status-dot" />
+                {t(client.demo ? "Demo mode" : "Connected")}
+              </span>
+              {controls}
+              <a href={repo} aria-label={t("GitHub repository")}>
+                <Github size={18} />
+              </a>
+              <button
+                className="icon"
+                onClick={logout}
+                aria-label={t("Sign out")}
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
+          </header>
+          {client.demo && (
+            <div className="demo-banner">
+              {t("Demo mode: all usage and balance values are synthetic.")}
+              <button onClick={logout}>
+                {t("Connect real account")}
+                <ArrowUpRight size={14} />
+              </button>
+            </div>
+          )}
+          <main className="content">
+            <div className="refresh-line">
+              <span>
+                {updated
+                  ? `${t("Updated")} ${date(updated)} UTC`
+                  : t("Awaiting data")}
+              </span>
+              <button disabled={busy || retryAt > now} onClick={refreshData}>
+                <RefreshCw size={14} className={busy ? "spinning" : ""} />
+                {t("Refresh")}
+              </button>
+            </div>
+            <Routes>
+              <Route path="/dashboard/home" element={overview} />
+              <Route
+                path="/dashboard/models"
+                element={
+                  <>
+                    <PageTitle
+                      title="Models"
+                      description="Compare the returned model groups. Ollama returns at most ten named models, plus other models."
                     />
-                  </section>
-                </>
-              }
-            />
-            <Route
-              path="/dashboard/api-explorer"
-              element={
-                <ApiExplorer
-                  client={client}
-                  range={range}
-                  scope={scope}
-                  onError={handleError}
-                  number={number}
-                />
-              }
-            />
-            <Route
-              path="/dashboard/settings"
-              element={
-                <>
-                  <PageTitle
-                    title="Settings"
-                    description="Browser preferences and deployment information."
-                  />
-                  <section className="panel settings-panel">
-                    <h2>{t("Preferences")}</h2>
-                    <div className="setting-row">
-                      <div>
-                        <b>{t("Automatic refresh")}</b>
-                        <p>
-                          {t(
-                            "Refresh once per minute while this tab is visible.",
-                          )}
-                        </p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        aria-label={t("Automatic refresh")}
-                        checked={auto}
-                        onChange={(e) => setAuto(e.target.checked)}
+                    {filters}
+                    {error && notice(error)}
+                    <section className="panel">
+                      <DataTable
+                        rows={modelRows}
+                        searchKey="model"
+                        columns={[
+                          { key: "model", label: "Model" },
+                          {
+                            key: "usage_usd",
+                            label: "Cost (USD)",
+                            render: (value) => number(value, true),
+                          },
+                          {
+                            key: "request_count",
+                            label: "Requests",
+                            render: (value) => number(value),
+                          },
+                          {
+                            key: "input_tokens",
+                            label: "Input tokens",
+                            render: (value) => number(value),
+                          },
+                          {
+                            key: "output_tokens",
+                            label: "Output tokens",
+                            render: (value) => number(value),
+                          },
+                        ]}
                       />
-                    </div>
-                    <div className="setting-row">
-                      <b>{t("Language and appearance")}</b>
-                      <div className="utilities">{controls}</div>
-                    </div>
-                    <h2>{t("Server information")}</h2>
-                    <div className="setting-row">
-                      <span>{t("Ollama endpoint")}</span>
-                      <code>https://ollama.com</code>
-                      <CopyButton value="https://ollama.com" />
-                    </div>
-                    <div className="setting-row">
-                      <span>{t("Version")}</span>
-                      <code>0.1.0</code>
-                    </div>
-                    <p>
-                      {t(
-                        "The proxy is read-only. Deployment configuration uses environment variables; server restart and mutable billing settings are not exposed.",
-                      )}
-                    </p>
-                    <div className="notice">
-                      <ShieldCheck size={18} />
-                      {t(
-                        "Your token stays in memory and is cleared when you leave or sign out.",
-                      )}
-                    </div>
-                    <a href={repo}>
-                      {t("GitHub repository")}
-                      <ExternalLink size={14} />
-                    </a>
-                  </section>
-                </>
-              }
-            />
-            <Route
-              path="*"
-              element={<Navigate to="/dashboard/home" replace />}
-            />
-          </Routes>
-        </main>
-        <footer className="app-footer">
-          <span>
-            Ollama Cloud Monitor <span className="muted">/</span> v0.1.0
-          </span>
-          <span>{t("Independent project. Powered by the Ollama API.")}</span>
-        </footer>
+                    </section>
+                  </>
+                }
+              />
+              <Route
+                path="/dashboard/api-explorer"
+                element={
+                  <ApiExplorer
+                    client={client}
+                    range={range}
+                    scope={scope}
+                    onError={handleError}
+                    number={number}
+                  />
+                }
+              />
+              <Route
+                path="/dashboard/settings"
+                element={
+                  <>
+                    <PageTitle
+                      title="Settings"
+                      description="Browser preferences and deployment information."
+                    />
+                    <section className="panel settings-panel">
+                      <h2>{t("Preferences")}</h2>
+                      <div className="setting-row">
+                        <div>
+                          <b>{t("Automatic refresh")}</b>
+                          <p>
+                            {t(
+                              "Refresh once per minute while this tab is visible.",
+                            )}
+                          </p>
+                        </div>
+                        <input
+                          type="checkbox"
+                          aria-label={t("Automatic refresh")}
+                          checked={auto}
+                          onChange={(e) => setAuto(e.target.checked)}
+                        />
+                      </div>
+                      <div className="setting-row">
+                        <b>{t("Language and appearance")}</b>
+                        <div className="utilities">{controls}</div>
+                      </div>
+                      <h2>{t("Server information")}</h2>
+                      <div className="setting-row">
+                        <span>{t("Ollama endpoint")}</span>
+                        <code>https://ollama.com</code>
+                        <CopyButton value="https://ollama.com" />
+                      </div>
+                      <div className="setting-row">
+                        <span>{t("Version")}</span>
+                        <code>0.1.0</code>
+                      </div>
+                      <p>
+                        {t(
+                          "The proxy is read-only. Deployment configuration uses environment variables; server restart and mutable billing settings are not exposed.",
+                        )}
+                      </p>
+                      <div className="notice">
+                        <ShieldCheck size={18} />
+                        {t(
+                          "Your token stays in memory and is cleared when you leave or sign out.",
+                        )}
+                      </div>
+                      <a href={repo}>
+                        {t("GitHub repository")}
+                        <ExternalLink size={14} />
+                      </a>
+                    </section>
+                  </>
+                }
+              />
+              <Route
+                path="*"
+                element={<Navigate to="/dashboard/home" replace />}
+              />
+            </Routes>
+          </main>
+          <footer className="app-footer">
+            <span>
+              Ollama Cloud Monitor <span className="muted">/</span> v0.1.0
+            </span>
+            <span>{t("Independent project. Powered by the Ollama API.")}</span>
+          </footer>
+        </div>
+        {detail && <JsonModal value={detail} onClose={() => setDetail(null)} />}
       </div>
-      {detail && <JsonModal value={detail} onClose={() => setDetail(null)} />}
-    </div>
+    </ChartTooltipProvider>
   );
 }
 function PageTitle({ title, description }) {
@@ -956,8 +935,48 @@ function PageTitle({ title, description }) {
     </div>
   );
 }
-function BalancePanel({ balance, number, date }) {
+function BalancePanel({ balance, updated, number, date }) {
   const { t } = useTranslation();
+  const { showTooltip, hideTooltip, tooltipId, activeTarget } =
+    useChartTooltip();
+  const details = useChartDetails();
+  const progressId = useId();
+  function showCreditDetails(event) {
+    showTooltip(event, {
+      title: t("Credit balance"),
+      subtitle: t("Updated") + " " + details.timestamp(updated),
+      rows: [
+        {
+          label: t("Included remaining"),
+          value: details.number(balance?.included?.balance_usd, true),
+        },
+        {
+          label: t("Purchased credits"),
+          value: details.number(balance?.purchased?.balance_usd, true),
+        },
+        {
+          label: t("Available balance"),
+          value: details.number(availableBalance(balance), true),
+        },
+        {
+          label: t("Resets"),
+          value: details.timestamp(balance?.included?.period?.until),
+        },
+      ],
+      footer:
+        t("of {{amount}} allowance", {
+          amount: details.number(balance?.included?.allowance_usd, true),
+        }) +
+        (balance?.included?.allowance_usd > 0
+          ? " · " +
+            details.percent(
+              balance.included.balance_usd / balance.included.allowance_usd,
+            ) +
+            " " +
+            t("remaining")
+          : ""),
+    });
+  }
   const included = balance?.included;
   const allowance = included?.allowance_usd;
   const remaining = included?.balance_usd;
@@ -982,6 +1001,19 @@ function BalancePanel({ balance, number, date }) {
       {percent != null && (
         <>
           <progress
+            id={progressId}
+            tabIndex={0}
+            aria-describedby={
+              activeTarget?.id === progressId ? tooltipId : undefined
+            }
+            onMouseEnter={showCreditDetails}
+            onMouseMove={showCreditDetails}
+            onMouseLeave={hideTooltip}
+            onFocus={showCreditDetails}
+            onBlur={hideTooltip}
+            onPointerDown={(event) => {
+              if (event.pointerType === "touch") showCreditDetails(event);
+            }}
             max="100"
             value={percent}
             aria-label={t("Included credits remaining")}

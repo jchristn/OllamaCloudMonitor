@@ -8,7 +8,7 @@ Verified locally on 2026-11-02, macOS ARM64, Node 24.21.0, .NET SDK 10.0.401, an
 | Managed Watson HTTP integration suite | 27 checks passed |
 | Native AOT shared HTTP integration suite | 27 checks passed |
 | Frontend accounting, request-building and locale unit tests | 14 tests passed |
-| Browser integration and responsive tests | 51 tests passed |
+| Browser integration and responsive tests | 60 tests passed |
 | Postman collection | 4 requests, 12 assertions, 0 failures |
 | OpenAPI syntax and collection lint | Passed, 0 issues |
 | i18n structural checks | 140 keys across 14 locales; key parity, usage, interpolation and encoding passed |
@@ -48,3 +48,11 @@ Added Brazilian Portuguese, French, Italian, German, Simplified Chinese, Russian
 Catalogs are split by language and loaded through dynamic imports. A browser test delayed the Hindi catalog and verified that the application remained unrendered until its selected language was ready. Switching to German fetched the German catalog without loading unrelated languages. All 51 browser tests passed, including every real language through mobile model/explorer/settings routes and logout, and persistence/reload checks for every non-English language and both pseudo-locales. Equal explorer control heights, response-placeholder wrapping and page overflow are checked on the localized mobile routes. German, Hindi and Simplified Chinese screenshots were inspected, including Devanagari rendering and Chinese number/date formatting. A localized heading assertion was scoped to level 1 after finding that Settings and Preferences legitimately share text in several languages.
 
 The full suite passed with 14 unit tests, 27 managed HTTP checks, 27 Native AOT checks and 12 Postman assertions, in addition to the browser and catalog checks. The Docker image builds with the split catalogs. Remote CI and native-speaker editorial review remain separate from this local validation. No real Ollama credential was used.
+
+## Workspace chart tooltips
+
+All plotted usage metrics, model-share bars and the included-credit meter use a single overlay owned by the authenticated workspace. The tooltip is portaled into the main workspace rather than a clipping chart panel. Its measured bounds are constrained to the visible content area and viewport, with placement above the hovered data. Resize and scroll events recompute placement. Focus associates the trigger with the tooltip, Escape dismisses it, and chart unmount/logout clears stale information. A first touch tap shows usage details; a second opens the existing JSON inspector.
+
+Usage tooltips show the full UTC start/end interval, selected model, cost, requests, input tokens, cached input tokens and output tokens. Counts are not abbreviated; USD values preserve up to eight decimal places. Missing legacy values remain unavailable. Model bars include their share of total cost. The credit meter shows included, purchased and combined current balances, allowance percentage and reset time. Its timestamp is the recorded API retrieval/cache time, not an invented historical balance.
+
+The full suite passed with 60 browser tests, 14 unit tests, 27 managed and 27 Native AOT HTTP checks and 12 Postman assertions. Nine new browser tests cover all five usage metrics, full values and interval timestamps, above-bar positioning, first/last bucket clamping at 1440/820/390 widths in LTR and RTL, scroll positioning, focus/ARIA association, Escape, model bars, the credit meter, logout cleanup and touch inspection. Desktop and mobile RTL tooltip screenshots were reviewed. The production Docker image also built successfully. No live Ollama account was used for these checks.
