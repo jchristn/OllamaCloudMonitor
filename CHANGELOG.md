@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Enabled automatic refresh by default while preserving saved preferences.
+
 - Added editable OpenAPI query parameters and accurate request previews to the API explorer, including endpoint-specific parameter handling and bundled contract fallback.
 - Aligned the API endpoint selector and Execute button heights across responsive layouts.
 

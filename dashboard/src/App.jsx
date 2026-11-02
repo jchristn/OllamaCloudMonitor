@@ -57,7 +57,7 @@ export default function App() {
     localStorage.getItem("monitor.theme") ?? "light",
   );
   const [auto, setAuto] = useState(
-    localStorage.getItem("monitor.auto") === "true",
+    localStorage.getItem("monitor.auto") !== "false",
   );
   const [range, setRange] = useState("7d");
   const [scope, setScope] = useState("self");

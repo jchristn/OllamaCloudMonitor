@@ -34,7 +34,7 @@ dotnet run --project src/OllamaCloudMonitor.Server -c Release
 
 Open **http://127.0.0.1:8080**. Choose **Explore demo dashboard**, or create an API key at [Ollama settings](https://ollama.com/settings/keys), paste the key into the bearer-token field, and select **Open dashboard**. Either the raw key or `Bearer <key>` is accepted. The server verifies access by fetching usage. Team usage requires an Ollama team administrator.
 
-Choose a timeframe and model to update the plot and usage totals. Hover or keyboard-focus a bar for its exact value; press Enter or click for the bucket JSON. Use **Export CSV** for the selected series. Balance always shows the entire account. Settings offers optional one-minute foreground refresh. Sign out clears session data and the key; page refresh requires signing in again.
+Choose a timeframe and model to update the plot and usage totals. Hover or keyboard-focus a bar for its exact value; press Enter or click for the bucket JSON. Use **Export CSV** for the selected series. Balance always shows the entire account. Automatic refresh is enabled by default and refreshes once per minute while the tab is visible. Disable it in Settings; the saved preference is preserved. Sign out clears session data and the key; page refresh requires signing in again.
 
 In **API explorer**, select an endpoint and edit its query controls before choosing **Execute**. Usage exposes `range`, `scope`, and `group_by`, using the allowed values from OpenAPI. Choose **Default (omit parameter)** to leave an optional value out. Balance and health have no query parameters. The encoded request path updates immediately; explorer changes do not change the overview filters.
 
