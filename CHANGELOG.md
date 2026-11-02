@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Removed the Open source label from the sidebar footer while retaining the version.
+
 - Removed the redundant account/session card from the sidebar.
 
 - Added complete Portuguese (Brazil), French, Italian, German, Simplified Chinese, Russian, Malay and Hindi translations, covering all twelve baseline languages.

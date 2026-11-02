@@ -11,7 +11,7 @@ Verified locally on 2026-11-02, macOS ARM64, Node 24.21.0, .NET SDK 10.0.401, an
 | Browser integration and responsive tests | 51 tests passed |
 | Postman collection | 4 requests, 12 assertions, 0 failures |
 | OpenAPI syntax and collection lint | Passed, 0 issues |
-| i18n structural checks | 142 keys across 14 locales; key parity, usage, interpolation and encoding passed |
+| i18n structural checks | 141 keys across 14 locales; key parity, usage, interpolation and encoding passed |
 | Dependency audit | 0 known vulnerabilities reported by npm audit |
 | Docker image | Built successfully with official .NET Alpine runtime |
 | Docker smoke test | Non-root, read-only container returned 200 for health and reached healthy state |

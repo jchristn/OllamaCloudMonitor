@@ -758,9 +758,7 @@ export default function App() {
             {t("Documentation")}
             <ExternalLink size={13} />
           </a>
-          <div className="version">
-            v0.1.0 <span>{t("Open source")}</span>
-          </div>
+          <div className="version">v0.1.0</div>
         </div>
       </aside>
       <div className="main-shell">
