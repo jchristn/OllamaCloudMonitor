@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Removed the redundant account/session card from the sidebar.
+
 - Added complete Portuguese (Brazil), French, Italian, German, Simplified Chinese, Russian, Malay and Hindi translations, covering all twelve baseline languages.
 - Split translations into lazy-loaded catalogs, expanded locale metadata and regional aliases, and added language persistence, mobile route and initial-paint checks.
 

@@ -749,16 +749,6 @@ export default function App() {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="connection-card">
-            <span className="status-dot" />
-            <div>
-              <b>{t(client.demo ? "Demo workspace" : "Ollama Cloud")}</b>
-              <small>
-                {t(client.demo ? "Synthetic data" : "Bearer session")}
-              </small>
-            </div>
-            <ShieldCheck size={17} />
-          </div>
           <a
             href="https://docs.ollama.com/api/cloud-usage"
             target="_blank"
