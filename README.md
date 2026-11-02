@@ -56,7 +56,7 @@ docker compose --env-file docker/.env -f docker/compose.yaml up --build -d
 
 Select **Open configured account** on the login page. The configured key stays on the server; requests with an explicit browser bearer token take precedence. Anyone who can reach the monitor can view the configured account, so the default port stays on loopback. Use an authenticated HTTPS reverse proxy before sharing it. Signing out clears the browser session but does not unset the server environment variable. See [Docker assets and operations](docker/README.md) for configuration, rotation, updates and factory reset.
 
-The Compose file builds a local image. To update a local checkout, pull Git changes and rerun `up --build -d`. `docker/update.sh` (macOS/Linux) and `docker/update.bat` (Windows) provide the required pull/down/up/status sequence for installations configured with a published image; this repository does not assume a Docker Hub image has already been published.
+The Compose file builds a local image. To update a local checkout, pull Git changes and rerun `up --build -d`. `docker/update.sh` (macOS/Linux) and `docker/update.bat` (Windows) run `build --pull` to refresh base images and build the application locally, then `up -d` to recreate changed containers, followed by container status. A failed build stops the update and leaves the running container in place. No published application image is required.
 
 ## Architecture and configuration
 

@@ -9,7 +9,6 @@ if [ -f .env ]; then
     set -- --env-file .env
 fi
 
-docker compose "$@" -f compose.yaml pull
-docker compose "$@" -f compose.yaml down
+docker compose "$@" -f compose.yaml build --pull
 docker compose "$@" -f compose.yaml up -d
 docker ps -a
